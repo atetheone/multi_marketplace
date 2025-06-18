@@ -1,0 +1,113 @@
+<!-- role-details.component.html -->
+<div class="p-4">
+  <div class="mb-4 flex justify-between items-center">
+    <h1 class="text-2xl font-semibold">Role Details</h1>
+    <div class="flex gap-2">
+      @if (!isEditMode) {
+        <button 
+          mat-flat-button 
+          color="primary" 
+          (click)="toggleEditMode()">
+          <mat-icon>edit</mat-icon>
+          Edit
+        </button>
+        <button 
+          mat-flat-button 
+          color="warn" 
+          (click)="deleteRole()">
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      } @else {
+        <button 
+          mat-flat-button 
+          color="accent" 
+          (click)="saveRole()"
+          [disabled]="roleForm.invalid">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
+        <button 
+          mat-flat-button 
+          (click)="toggleEditMode()">
+          <mat-icon>cancel</mat-icon>
+          Cancel
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <mat-card>
+      <mat-card-content class="p-4">
+        <div class="flex justify-center">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  @if (!isLoading && role) {
+    <form [formGroup]="roleForm">
+      <mat-card class="mb-6">
+        <mat-card-content class="p-4">
+          <h2 class="text-xl font-medium mb-4">Basic Information</h2>
+          
+          <mat-form-field class="w-full" appearance="outline">
+            <mat-label>Role Name</mat-label>
+            <input 
+              matInput 
+              formControlName="name" 
+              [readonly]="!isEditMode"
+              placeholder="Enter role name">
+            @if (roleForm.get('name')?.hasError('required')) {
+              <mat-error>
+                Role name is required
+              </mat-error>
+            }
+            @if (roleForm.get('name')?.hasError('minlength')) {
+              <mat-error>
+                Role name must be at least 3 characters
+              </mat-error>
+            }
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-content class="p-4">
+          <h2 class="text-xl font-medium mb-4">Permissions</h2>
+          
+          @if (permissionGroups.length === 0) {
+            <div class="mb-4">
+              <p class="text-gray-500">No permissions available.</p>
+            </div>
+          }
+
+          @for (group of permissionGroups; track group) {
+            <div class="mb-4">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                @for (permission of group.permissions; track permission.id) {
+                  <mat-card class="mb-2">
+                    <mat-card-content>
+                      <mat-checkbox 
+                        [checked]="isPermissionSelected(permission.id)"
+                        [disabled]="!isEditMode"
+                        (change)="togglePermission(permission.id)">
+                        <div class="flex flex-col">
+                          <span class="font-medium">
+                            {{permission.resourceDetails.name}} / {{permission.action}}
+                          </span>
+                        </div>
+                      </mat-checkbox>
+                    </mat-card-content>
+                  </mat-card>
+                }
+              </div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </form>
+  }
+</div>

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+echo "🔄 Starting database reset process..."
+
+# 1. Revert all migrations
+echo "↩️ Rolling back all migrations..."
+node ace migration:reset --force
+
+# 2. Run all migrations
+echo "⬆️ Running all migrations..."
+node ace migration:run
+
+# 3. Run seeders in correct order
+echo "🌱 Running seeders..."
+
+# Run main seeder which handles the order:
+# 1. PermissionSeeder & RoleSeeder (roles/permissions setup)
+node ace db:seed --files database/seeders/permission_seeder.ts
+node ace db:seed --files database/seeders/role_seeder.ts
+# 2. TenantSeeder (tenants + admin users)
+node ace db:seed --files database/seeders/tenant_seeder.ts
+# 3. UserSeeder (demo users)
+node ace db:seed --files database/seeders/user_seeder.ts
+# 5. MenuItemSeeder (navigation)
+node ace db:seed --files database/seeders/menu_item_seeder.ts
+# 6. ProductSeeder (products + categories)
+node ace db:seed --files database/seeders/product_seeder.ts
+# 7. ZoneSeeder (delivery zones)
+node ace db:seed --files database/seeders/zone_seeder.ts
+
+echo "✅ Database reset complete!"

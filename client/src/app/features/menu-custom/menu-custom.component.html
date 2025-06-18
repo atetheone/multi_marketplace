@@ -1,0 +1,96 @@
+<div class="container mx-auto p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Menu Customization</h1>
+    <button mat-raised-button color="primary" (click)="openMenuItemEditor()">
+      <mat-icon>add</mat-icon> Add Menu Item
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <ng-container *ngIf="loadingSubject.value; else contentLoaded">
+        <div class="flex justify-center my-8">
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      </ng-container>
+      
+      <ng-template #contentLoaded>
+        <div *ngIf="menuItems.length === 0" class="text-center py-8">
+          <mat-icon class="text-gray-400 text-6xl">menu</mat-icon>
+          <p class="mt-4 text-gray-500">No menu items found. Create your first menu item!</p>
+        </div>
+        
+        <div class="mat-elevation-z1" *ngIf="menuItems.length > 0">
+          <table mat-table [dataSource]="menuItems" cdkDropList 
+                 (cdkDropListDropped)="onDrop($event)" class="w-full">
+            
+            <!-- Position Column -->
+            <ng-container matColumnDef="position">
+              <th mat-header-cell *matHeaderCellDef>Position</th>
+              <td mat-cell *matCellDef="let item; let i = index" 
+                  [ngStyle]="{'padding-left': getIndentation(item.level)}">
+                <mat-icon cdkDragHandle>drag_indicator</mat-icon>
+                <span class="ml-2">{{ i + 1 }}</span>
+              </td>
+            </ng-container>
+            
+            <!-- Icon Column -->
+            <ng-container matColumnDef="icon">
+              <th mat-header-cell *matHeaderCellDef>Icon</th>
+              <td mat-cell *matCellDef="let item">
+                <mat-icon *ngIf="item.icon">{{ item.icon }}</mat-icon>
+                <span *ngIf="!item.icon" class="text-gray-400">-</span>
+              </td>
+            </ng-container>
+            
+            <!-- Label Column -->
+            <ng-container matColumnDef="label">
+              <th mat-header-cell *matHeaderCellDef>Label</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.label }}
+                <span *ngIf="item.children && item.children.length > 0" 
+                      class="text-xs text-gray-500 ml-2">(Has children)</span>
+              </td>
+            </ng-container>
+            
+            <!-- Route Column -->
+            <ng-container matColumnDef="route">
+              <th mat-header-cell *matHeaderCellDef>Route</th>
+              <td mat-cell *matCellDef="let item">
+                <span *ngIf="item.route">{{ item.route }}</span>
+                <span *ngIf="!item.route" class="text-gray-400">-</span>
+              </td>
+            </ng-container>
+            
+            <!-- Permissions Column -->
+            <ng-container matColumnDef="permissions">
+              <th mat-header-cell *matHeaderCellDef>Required Permissions</th>
+              <td mat-cell *matCellDef="let item">
+                <span>{{ getPermissionNames(item.requiredPermissions) }}</span>
+              </td>
+            </ng-container>
+            
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let item">
+                <button mat-icon-button color="primary" (click)="openMenuItemEditor(item)" 
+                        matTooltip="Edit menu item">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="confirmDelete(item)" 
+                        matTooltip="Delete menu item">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                cdkDrag [cdkDragData]="row"></tr>
+          </table>
+        </div>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+</div>

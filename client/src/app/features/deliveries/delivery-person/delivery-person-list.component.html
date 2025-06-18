@@ -1,0 +1,165 @@
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Delivery Personnel</h1>
+    <button mat-raised-button color="primary" (click)="createNewDeliveryPerson()">
+      <mat-icon>add</mat-icon>
+      Add Delivery Person
+    </button>
+  </div>
+
+  <!-- Filter and actions -->
+  <mat-card class="mb-6">
+    <mat-card-content>
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <mat-form-field appearance="fill" class="w-full md:w-1/3">
+          <mat-label>Search</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Filter by name, vehicle, etc.">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="flex items-center gap-4">
+          <mat-form-field appearance="fill">
+            <mat-label>Filter by Zone</mat-label>
+            <mat-select [(ngModel)]="selectedZoneId">
+              @for (zone of zones; track zone.id) {
+                <mat-option [value]="zone.id">
+                  {{ zone.name }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" (click)="filterByZone()" [disabled]="!selectedZoneId">
+            Apply Filter
+          </button>
+
+          <button mat-stroked-button (click)="clearZoneFilter()" [disabled]="!selectedZoneId">
+            Clear
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Delivery Person Table -->
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Delivery Personnel</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (isLoading) {
+        <div class="flex justify-center my-6">
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      }
+
+      @if (!isLoading && dataSource.data.length === 0) {
+        <div class="text-center my-6 py-8">
+          <mat-icon class="text-gray-400 text-6xl">people</mat-icon>
+          <p class="mt-4 text-gray-500">No delivery personnel found</p>
+        </div>
+      }
+
+      @if (!isLoading && dataSource.data.length > 0) {
+        <div class="overflow-x-auto">
+          <table mat-table [dataSource]="dataSource" class="w-full">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let person">
+                {{ person.user.firstName }} {{ person.user.lastName }}
+              </td>
+            </ng-container>
+
+            <!-- Vehicle Type Column -->
+            <ng-container matColumnDef="vehicleType">
+              <th mat-header-cell *matHeaderCellDef>Vehicle</th>
+              <td mat-cell *matCellDef="let person">
+                <div class="flex items-center">
+                  <mat-icon [ngClass]="{
+                    'text-blue-500': person.vehicleType === VehicleType.MOTORCYCLE,
+                    'text-green-500': person.vehicleType === VehicleType.BICYCLE,
+                    'text-purple-500': person.vehicleType === VehicleType.CAR,
+                    'text-orange-500': person.vehicleType === VehicleType.VAN
+                  }">
+                    {{ person.vehicleType === VehicleType.MOTORCYCLE ? 'two_wheeler' : 
+                       person.vehicleType === VehicleType.BICYCLE ? 'pedal_bike' :
+                       person.vehicleType === VehicleType.CAR ? 'directions_car' : 'local_shipping' }}
+                  </mat-icon>
+                  <span class="ml-2 capitalize">{{ person.vehicleType }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Availability Column -->
+            <ng-container matColumnDef="isAvailable">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let person">
+                @if (person.isAvailable) {
+                  <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                    Available
+                  </span>
+                } @else {
+                  <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+                    Unavailable
+                  </span>
+                }
+              </td>
+            </ng-container>
+
+            <!-- Rating Column -->
+            <ng-container matColumnDef="rating">
+              <th mat-header-cell *matHeaderCellDef>Rating</th>
+              <td mat-cell *matCellDef="let person">
+                <div class="flex items-center">
+                  <mat-icon class="text-amber-500">star</mat-icon>
+                  <span class="ml-1">{{ person.rating?.toFixed(1) || 'N/A' }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Completed Deliveries Column -->
+            <ng-container matColumnDef="completedDeliveries">
+              <th mat-header-cell *matHeaderCellDef>Completed</th>
+              <td mat-cell *matCellDef="let person">
+                {{ person.completedDeliveries || 0 }}
+              </td>
+            </ng-container>
+
+            <!-- Zones Column -->
+            <ng-container matColumnDef="zones">
+              <th mat-header-cell *matHeaderCellDef>Delivery Zones</th>
+              <td mat-cell *matCellDef="let person">
+                {{ getZoneNames(person.zones) }}
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let person">
+                <button mat-icon-button color="primary" matTooltip="Edit" (click)="editDeliveryPerson(person.id)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                
+                <button mat-icon-button [color]="person.isAvailable ? 'warn' : 'accent'" 
+                      [matTooltip]="person.isAvailable ? 'Mark as unavailable' : 'Mark as available'"
+                      (click)="toggleAvailability(person)">
+                  <mat-icon>{{ person.isAvailable ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                </button>
+                
+                <button mat-icon-button color="primary" matTooltip="View delivery history" 
+                       (click)="viewDeliveryHistory(person.id)">
+                  <mat-icon>history</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

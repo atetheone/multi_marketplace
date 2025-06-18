@@ -1,0 +1,18 @@
+<mat-nav-list>
+  @for (item of menuItems$ | async; track item.id) {
+    <mat-list-item 
+      [routerLink]="item.route"
+      routerLinkActive="active-link"
+      [matTooltip]="!isExpanded ? item.label : ''"
+      matTooltipPosition="after"
+    >
+      <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+      @if (isExpanded) {
+        <span matListItemTitle>{{ item.label }}</span>
+      }
+    </mat-list-item>
+  }
+  
+  <mat-divider></mat-divider>
+  
+</mat-nav-list>

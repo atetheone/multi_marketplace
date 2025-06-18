@@ -1,0 +1,249 @@
+<div class="container mx-auto p-4">
+  <div class="flex items-center mb-4">
+    <button mat-icon-button [routerLink]="['/dashboard/deliveries']">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="text-2xl font-bold ml-2">Delivery Details</h1>
+  </div>
+  
+  <div *ngIf="loading$ | async" class="flex justify-center py-8">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+  
+  <ng-container *ngIf="!(loading$ | async) && delivery">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- Delivery Info Card -->
+      <mat-card class="lg:col-span-2">
+        <mat-card-header>
+          <mat-card-title>Delivery #{{ delivery.id }}</mat-card-title>
+          <mat-card-subtitle>
+            <span [ngClass]="{
+              'bg-yellow-100 text-yellow-800': delivery.status === 'pending',
+              'bg-blue-100 text-blue-800': delivery.status === 'assigned',
+              'bg-purple-100 text-purple-800': delivery.status === 'shipped',
+              'bg-green-100 text-green-800': delivery.status === 'delivered',
+              'bg-red-100 text-red-800': delivery.status === 'returned' || delivery.status === 'cancelled'
+            }" class="px-2 py-1 rounded-full text-xs font-medium">
+              {{ delivery.status | titlecase }}
+            </span>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content class="mt-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-gray-600 text-sm">Order ID</p>
+              <p class="font-medium">
+                <a [routerLink]="['/dashboard/orders', delivery.orderId]"
+                   class="text-blue-600 hover:underline">
+                  #{{ delivery.orderId }}
+                </a>
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-600 text-sm">Created</p>
+              <p class="font-medium">{{ delivery.createdAt | date:'medium' }}</p>
+            </div>
+            <div>
+              <p class="text-gray-600 text-sm">Assigned</p>
+              <p class="font-medium">{{ delivery.assignedAt ? (delivery.assignedAt | date:'medium') : 'Not assigned' }}</p>
+            </div>
+            <div>
+              <p class="text-gray-600 text-sm">Picked Up</p>
+              <p class="font-medium">{{ delivery.shippedAt ? (delivery.shippedAt | date:'medium') : 'Not picked up' }}</p>
+            </div>
+            <div>
+              <p class="text-gray-600 text-sm">Delivered</p>
+              <p class="font-medium">{{ delivery.deliveredAt ? (delivery.deliveredAt | date:'medium') : 'Not delivered' }}</p>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <p class="text-gray-600 text-sm">Notes</p>
+            <p class="font-medium">{{ delivery.notes || 'No notes' }}</p>
+          </div>
+
+          <!-- Shipping Address -->
+          @if (delivery.order.shippingAddress) {
+            <div class="mt-6">
+              <h3 class="font-medium mb-2">Shipping Address</h3>
+              <div class="bg-gray-50 p-3 rounded">
+                <p>{{ delivery.order.shippingAddress.addressLine1 }}</p>
+                @if (delivery.order.shippingAddress.addressLine2) {
+                  <p>{{ delivery.order.shippingAddress.addressLine2 }}</p>
+                }
+                <p>{{ delivery.order.shippingAddress?.city }}, {{ delivery.order.shippingAddress?.state || '' }} {{ delivery.order.shippingAddress?.postalCode || '' }}</p>
+                <p>{{ delivery.order.shippingAddress?.country }}</p>
+                @if (delivery.order.shippingAddress?.phone) {
+                  <p>Phone: {{ delivery.order.shippingAddress?.phone }}</p>
+                }
+              </div>
+            </div>
+          }
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="warn" 
+                  [disabled]="delivery.status === 'delivered' || delivery.status === 'cancelled'"
+                  (click)="updateStatus('cancelled')">
+            CANCEL DELIVERY
+          </button>
+          <button mat-button color="primary" 
+                  [disabled]="delivery.status !== 'assigned'"
+                  (click)="updateStatus('shipped')">
+            MARK AS PICKED UP
+          </button>
+          <button mat-button color="primary" 
+                  [disabled]="delivery.status !== 'shipped'"
+                  (click)="updateStatus('delivered')">
+            MARK AS DELIVERED
+          </button>
+          <button mat-button color="warn" 
+                  [disabled]="delivery.status !== 'shipped'"
+                  (click)="updateStatus('returned')">
+            MARK AS RETURNED
+          </button>
+        </mat-card-actions>
+      </mat-card>
+      
+      <!-- Delivery Person Info Card -->
+      <mat-card *ngIf="delivery.deliveryPerson">
+        <mat-card-header>
+          <mat-card-title>Delivery Person</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="mt-4">
+          <div class="text-center mb-4">
+            <div class="inline-block h-20 w-20 rounded-full bg-gray-200 flex items-center justify-center">
+              <mat-icon class="text-4xl">person</mat-icon>
+            </div>
+            <h3 class="mt-2 font-medium text-lg">
+              {{ delivery.deliveryPerson.user.firstName }} 
+              {{ delivery.deliveryPerson.user.lastName }}
+            </h3>
+            <p class="text-gray-600">
+              {{ delivery.deliveryPerson.user.email }}
+            </p>
+          </div>
+          
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <p class="text-gray-600 text-sm">Vehicle</p>
+              <p class="font-medium capitalize">
+                {{ delivery.deliveryPerson.vehicleType }} 
+                ({{ delivery.deliveryPerson.vehiclePlateNumber }})
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-600 text-sm">Rating</p>
+              <div class="flex items-center">
+                <span class="font-medium mr-2">
+                  {{ delivery.deliveryPerson.rating || 'N/A' }}
+                </span>
+                <div class="flex">
+                  <mat-icon *ngFor="let star of getStarArray(delivery.deliveryPerson.rating)"
+                           class="text-yellow-500">star</mat-icon>
+                </div>
+              </div>
+            </div>
+            <div>
+              <p class="text-gray-600 text-sm">Total Deliveries</p>
+              <p class="font-medium">{{ delivery.deliveryPerson.totalDeliveries || 0 }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary"
+                  [routerLink]="['/dashboard/delivery-persons', delivery.deliveryPerson.id]">
+            VIEW PROFILE
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Timeline Card -->
+      <mat-card class="lg:col-span-3 mt-4">
+        <mat-card-header>
+          <mat-card-title>Delivery Timeline</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="mt-4">
+          <div class="relative pl-8 pb-6">
+            <!-- Created -->
+            <div class="absolute left-0 top-0 bottom-0 w-px bg-gray-200"></div>
+            <div class="mb-8 relative">
+              <div class="absolute left-0 top-1 w-6 h-6 -ml-3 rounded-full bg-green-500 flex items-center justify-center">
+                <mat-icon class="text-white text-sm">check</mat-icon>
+              </div>
+              <div class="ml-6">
+                <p class="font-medium">Order Created</p>
+                <p class="text-sm text-gray-500">{{ delivery.createdAt | date:'medium' }}</p>
+              </div>
+            </div>
+
+            <!-- Assigned -->
+            <div class="mb-8 relative">
+              <div class="absolute left-0 top-1 w-6 h-6 -ml-3 rounded-full" 
+                   [ngClass]="delivery.assignedAt ? 'bg-green-500' : 'bg-gray-300'"
+                   class="flex items-center justify-center">
+                <mat-icon *ngIf="delivery.assignedAt" class="text-white text-sm">check</mat-icon>
+                <mat-icon *ngIf="!delivery.assignedAt" class="text-white text-sm">more_horiz</mat-icon>
+              </div>
+              <div class="ml-6">
+                <p class="font-medium">Assigned to Delivery Person</p>
+                <p class="text-sm text-gray-500">{{ delivery.assignedAt ? (delivery.assignedAt | date:'medium') : 'Pending' }}</p>
+              </div>
+            </div>
+
+            <!-- Picked Up -->
+            <div class="mb-8 relative">
+              <div class="absolute left-0 top-1 w-6 h-6 -ml-3 rounded-full" 
+                   [ngClass]="delivery.shippedAt ? 'bg-green-500' : 'bg-gray-300'"
+                   class="flex items-center justify-center">
+                <mat-icon *ngIf="delivery.shippedAt" class="text-white text-sm">check</mat-icon>
+                <mat-icon *ngIf="!delivery.shippedAt" class="text-white text-sm">more_horiz</mat-icon>
+              </div>
+              <div class="ml-6">
+                <p class="font-medium">Shipped</p>
+                <p class="font-medium">{{ delivery.shippedAt ? (delivery.shippedAt | date:'medium') : 'Not shipped up' }}</p>
+              </div>
+            </div>
+
+            <!-- Delivered/Returned -->
+            <div class="relative">
+              <div class="absolute left-0 top-1 w-6 h-6 -ml-3 rounded-full" 
+                   [ngClass]="{
+                     'bg-green-500': delivery.deliveredAt,
+                     'bg-red-500': delivery.status === 'returned' || delivery.status === 'cancelled',
+                     'bg-gray-300': !delivery.deliveredAt && delivery.status !== 'returned' && delivery.status !== 'cancelled'
+                   }"
+                   class="flex items-center justify-center">
+                <mat-icon *ngIf="delivery.deliveredAt" class="text-white text-sm">check</mat-icon>
+                <mat-icon *ngIf="delivery.status === 'returned' || delivery.status === 'cancelled'" class="text-white text-sm">close</mat-icon>
+                <mat-icon *ngIf="!delivery.deliveredAt && delivery.status !== 'returned' && delivery.status !== 'cancelled'" class="text-white text-sm">more_horiz</mat-icon>
+              </div>
+              <div class="ml-6">
+                <p class="font-medium">
+                  {{ delivery.status === 'returned' ? 'Returned' : delivery.status === 'cancelled' ? 'Cancelled' : 'Delivered' }}
+                </p>
+                <p class="text-sm text-gray-500">
+                  {{ delivery.deliveredAt 
+                      ? (delivery.deliveredAt | date:'medium') 
+                      : (delivery.status === 'returned' || delivery.status === 'cancelled' 
+                          ? 'Not delivered' 
+                          : 'Pending'
+                        ) 
+                      }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-container>
+
+  <!-- Error State -->
+  <div *ngIf="!(loading$ | async) && !delivery" class="text-center py-8">
+    <mat-icon class="text-gray-400 text-5xl">error_outline</mat-icon>
+    <p class="mt-4 text-gray-600">Delivery not found</p>
+    <button mat-raised-button color="primary" class="mt-4" [routerLink]="['/dashboard/deliveries']">
+      Return to Deliveries
+    </button>
+  </div>
+</div>

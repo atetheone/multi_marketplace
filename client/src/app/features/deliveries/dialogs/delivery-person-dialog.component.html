@@ -1,0 +1,176 @@
+<h2 mat-dialog-title>{{ data.isEditMode ? 'Edit' : 'Add' }} Delivery Person</h2>
+
+@if (isLoading) {
+  <div class="flex justify-center my-6">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+}
+
+@if (!isLoading) {
+  <mat-dialog-content class="mat-typography">
+    <form [formGroup]="deliveryPersonForm" class="delivery-person-form">
+      <div class="form-section">
+        <h3 class="section-title">Personal Information</h3>
+        <div class="grid grid-cols-1 gap-4">
+          <!-- User Selection -->
+          <mat-form-field appearance="fill">
+            <mat-label>Select User</mat-label>
+            <mat-select formControlName="userId">
+              @for (user of eligibleUsers; track user.id) {
+                <mat-option [value]="user.id">
+                  {{ user.firstName }} {{ user.lastName }} ({{ user.email }})
+                </mat-option>
+              }
+            </mat-select>
+            @if (deliveryPersonForm.get('userId')?.hasError('required')) {
+              <mat-error>
+                User is required
+              </mat-error>
+            }
+            @if (!data.isEditMode) {
+              <mat-hint>Select a user with the 'delivery-person' role</mat-hint>
+            }
+          </mat-form-field>
+          
+          <!-- Status Fields -->
+          <div class="flex items-center gap-6">
+            <mat-slide-toggle formControlName="isActive" color="primary">
+              Active
+            </mat-slide-toggle>
+            
+            <mat-slide-toggle formControlName="isAvailable" color="primary">
+              Available for Deliveries
+            </mat-slide-toggle>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Vehicle Information</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Vehicle Type -->
+          <mat-form-field appearance="fill">
+            <mat-label>Vehicle Type</mat-label>
+            <mat-select formControlName="vehicleType">
+              @for (type of vehicleTypes; track type) {
+                <mat-option [value]="type">
+                  <div class="flex items-center">
+                    <mat-icon [ngClass]="{
+                      'text-blue-500': type === VehicleType.MOTORCYCLE,
+                      'text-green-500': type === VehicleType.BICYCLE,
+                      'text-purple-500': type === VehicleType.CAR,
+                      'text-orange-500': type === VehicleType.VAN
+                    }">
+                      {{ type === VehicleType.MOTORCYCLE ? 'two_wheeler' : 
+                         type === VehicleType.BICYCLE ? 'pedal_bike' :
+                         type === VehicleType.CAR ? 'directions_car' : 'local_shipping' }}
+                    </mat-icon>
+                    <span class="ml-2 capitalize">{{ type }}</span>
+                  </div>
+                </mat-option>
+              }
+            </mat-select>
+            @if (deliveryPersonForm.get('vehicleType')?.hasError('required')) {
+              <mat-error>
+                Vehicle type is required
+              </mat-error>
+            }
+          </mat-form-field>
+          
+          <!-- License Plate -->
+          <mat-form-field appearance="fill">
+            <mat-label>Vehicle Plate Number</mat-label>
+            <input matInput formControlName="vehiclePlateNumber" placeholder="ABC-123">
+            @if (deliveryPersonForm.get('vehiclePlateNumber')?.hasError('required')) {
+              <mat-error>
+                Vehicle plate number is required
+              </mat-error>
+            }
+          </mat-form-field>
+          
+          <!-- Vehicle Model -->
+          <mat-form-field appearance="fill">
+            <mat-label>Vehicle Model</mat-label>
+            <input matInput formControlName="vehicleModel" placeholder="e.g., Honda CBR">
+          </mat-form-field>
+          
+          <!-- Vehicle Year -->
+          <mat-form-field appearance="fill">
+            <mat-label>Vehicle Year</mat-label>
+            <input matInput type="number" formControlName="vehicleYear" placeholder="e.g., 2022">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">License Information</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- License Number -->
+          <mat-form-field appearance="fill">
+            <mat-label>License Number</mat-label>
+            <input matInput formControlName="licenseNumber" placeholder="DL12345678">
+            @if (deliveryPersonForm.get('licenseNumber')?.hasError('required')) {
+              <mat-error>
+                License number is required
+              </mat-error>
+            }
+          </mat-form-field>
+          
+          <!-- License Type -->
+          <mat-form-field appearance="fill">
+            <mat-label>License Type</mat-label>
+            <input matInput formControlName="licenseType" placeholder="e.g., A, B, C">
+          </mat-form-field>
+          
+          <!-- License Expiry -->
+          <mat-form-field appearance="fill" class="col-span-1 md:col-span-2">
+            <mat-label>License Expiry Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="licenseExpiry"
+                   [min]="minExpiryDate">
+            <mat-hint>Must be at least 30 days in the future</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            @if (deliveryPersonForm.get('licenseExpiry')?.hasError('required')) {
+              <mat-error>
+                License expiry date is required
+              </mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-title">Delivery Zones</h3>
+        <div class="grid grid-cols-1 gap-4">
+          <mat-form-field appearance="fill">
+            <mat-label>Select Delivery Zones</mat-label>
+            <mat-select formControlName="zoneIds" multiple>
+              @for (zone of zones; track zone.id) {
+                <mat-option [value]="zone.id">
+                  {{ zone.name }} (Fee: {{ zone.fee | currency: 'XOF' }})
+                </mat-option>
+              }
+            </mat-select>
+            @if (deliveryPersonForm.get('zoneIds')?.hasError('required')) {
+              <mat-error>
+                At least one delivery zone is required
+              </mat-error>
+            }
+            <mat-hint>Select all zones where this person can deliver</mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="isSubmitting" (click)="onSubmit()">
+      @if (isSubmitting) {
+        <mat-spinner [diameter]="20" class="spinner-in-button"></mat-spinner>
+      } @else {
+        <span>{{ data.isEditMode ? 'Update' : 'Create' }}</span>
+      }
+    </button>
+  </mat-dialog-actions>
+}

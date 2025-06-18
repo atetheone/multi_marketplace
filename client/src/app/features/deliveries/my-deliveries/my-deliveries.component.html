@@ -1,0 +1,221 @@
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">My Deliveries</h1>
+    
+    <button mat-raised-button color="primary" (click)="refreshDeliveries()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="flex justify-center py-8">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <!-- Active Deliveries Section -->
+  <mat-card class="mb-6">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="flex items-center">
+          <mat-icon class="mr-2">local_shipping</mat-icon>
+          <span>Active Deliveries</span>
+          <span class="ml-2 bg-green-100 text-green-800 py-1 px-3 rounded-full text-xs">
+            {{activeDeliveries.length}}
+          </span>
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="activeDeliveries" class="w-full">
+          <!-- Order ID Column -->
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef>Order</th>
+            <td mat-cell *matCellDef="let delivery">
+              <a [routerLink]="['/dashboard/orders', delivery.orderId]" class="text-blue-600 hover:underline">
+                #{{delivery.orderId}}
+              </a>
+            </td>
+          </ng-container>
+          
+          <!-- Customer Column -->
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let delivery">
+              {{delivery.order.user?.firstName}} {{delivery.order.user?.lastName}}
+            </td>
+          </ng-container>
+          
+          <!-- Address Column -->
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef>Shipping Address</th>
+            <td mat-cell *matCellDef="let delivery">
+              <div class="text-sm">
+                {{delivery.order.shippingAddress?.addressLine1}}, 
+                {{delivery.order.shippingAddress?.city}}
+              </div>
+              <div class="text-xs text-gray-500">
+                Zone: {{delivery.order.shippingAddress?.zone?.name}}
+              </div>
+            </td>
+          </ng-container>
+          
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let delivery">
+              <span class="px-2 py-1 rounded text-xs font-medium" 
+                    [ngClass]="delivery.status | deliveryStatusColor">
+                {{delivery.status}}
+              </span>
+            </td>
+          </ng-container>
+          
+          <!-- Assigned At Column -->
+          <ng-container matColumnDef="assignedAt">
+            <th mat-header-cell *matHeaderCellDef>Assigned</th>
+            <td mat-cell *matCellDef="let delivery">
+              {{delivery.assignedAt | date:'medium'}}
+            </td>
+          </ng-container>
+          
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let delivery">
+              @if (canUpdateStatus(delivery.status)) {
+                <button 
+                  mat-raised-button 
+                  color="primary" 
+                  (click)="updateDeliveryStatus(delivery)">
+                  {{getNextActionLabel(delivery.status)}}
+                </button>
+              }
+              
+              <a 
+                mat-icon-button 
+                color="primary" 
+                [routerLink]="['/dashboard/deliveries', delivery.id]" 
+                matTooltip="View Details">
+                <mat-icon>visibility</mat-icon>
+              </a>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        @if (activeDeliveries.length === 0 && !isLoading) {
+          <div class="py-8 text-center text-gray-500">
+            <mat-icon class="text-gray-400 text-4xl mb-2">local_shipping</mat-icon>
+            <p>No active deliveries at the moment</p>
+          </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Completed Deliveries Section -->
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <div class="flex items-center">
+          <mat-icon class="mr-2">done_all</mat-icon>
+          <span>Completed Deliveries</span>
+          <span class="ml-2 bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-xs">
+            {{completedDeliveries.length}}
+          </span>
+        </div>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="completedDeliveries" class="w-full">
+          <!-- Order ID Column -->
+          <ng-container matColumnDef="orderId">
+            <th mat-header-cell *matHeaderCellDef>Order</th>
+            <td mat-cell *matCellDef="let delivery">
+              <a [routerLink]="['/dashboard/orders', delivery.orderId]" class="text-blue-600 hover:underline">
+                #{{delivery.orderId}}
+              </a>
+            </td>
+          </ng-container>
+          
+          <!-- Customer Column -->
+          <ng-container matColumnDef="customer">
+            <th mat-header-cell *matHeaderCellDef>Customer</th>
+            <td mat-cell *matCellDef="let delivery">
+              {{delivery.order.user?.firstName}} {{delivery.order.user?.lastName}}
+            </td>
+          </ng-container>
+          
+          <!-- Address Column -->
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef>Shipping Address</th>
+            <td mat-cell *matCellDef="let delivery">
+              <div class="text-sm">
+                {{delivery.order.shippingAddress?.addressLine1}}, 
+                {{delivery.order.shippingAddress?.city}}
+              </div>
+              <div class="text-xs text-gray-500">
+                Zone: {{delivery.order.shippingAddress?.zone?.name}}
+              </div>
+            </td>
+          </ng-container>
+          
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let delivery">
+              <span class="px-2 py-1 rounded text-xs font-medium" 
+                    [ngClass]="delivery.status | deliveryStatusColor">
+                {{delivery.status}}
+              </span>
+            </td>
+          </ng-container>
+          
+          <!-- Assigned At Column -->
+          <ng-container matColumnDef="assignedAt">
+            <th mat-header-cell *matHeaderCellDef>Completed</th>
+            <td mat-cell *matCellDef="let delivery">
+              @if (delivery.status === deliveryStatusEnum.DELIVERED) {
+                {{delivery.deliveredAt | date:'medium'}}
+              }
+              @if (delivery.status === deliveryStatusEnum.RETURNED || delivery.status === deliveryStatusEnum.CANCELLED) {
+                {{delivery.updatedAt | date:'medium'}}
+              }
+            </td>
+          </ng-container>
+          
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let delivery">
+              <a 
+                mat-icon-button 
+                color="primary" 
+                [routerLink]="['/dashboard/deliveries', delivery.id]" 
+                matTooltip="View Details"
+              >
+                <mat-icon>visibility</mat-icon>
+              </a>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        @if (completedDeliveries.length === 0 && !isLoading) {
+          <div class="py-8 text-center text-gray-500">
+            <mat-icon class="text-gray-400 text-4xl mb-2">done_all</mat-icon>
+            <p>No completed deliveries yet</p>
+          </div>
+        }
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

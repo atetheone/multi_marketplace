@@ -1,0 +1,100 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<form [formGroup]="menuItemForm" (ngSubmit)="submit()">
+  <mat-dialog-content>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Label -->
+      <mat-form-field appearance="fill" class="col-span-2">
+        <mat-label>Label</mat-label>
+        <input matInput formControlName="label" placeholder="Enter menu item label">
+        @if (menuItemForm.get('label')?.errors?.['required']) {
+          <mat-error>Label is required</mat-error>
+        }
+        @if (menuItemForm.get('label')?.errors?.['minlength']) {
+          <mat-error>Label should be at least 2 characters</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Icon -->
+      <mat-form-field appearance="fill">
+        <mat-label>Icon</mat-label>
+        <input matInput formControlName="icon" placeholder="Material icon name" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+          @for (icon of getIconsList(); track icon) {
+            <mat-option [value]="icon">
+              <mat-icon>{{ icon }}</mat-icon>
+            </mat-option>
+          }
+        </mat-autocomplete>
+        @if (menuItemForm.get('icon')?.value) {
+          <mat-icon matPrefix>{{ menuItemForm.get('icon')?.value }}</mat-icon>
+        }
+        <mat-hint>Optional, uses Material icons</mat-hint>
+      </mat-form-field>
+
+      <!-- Route -->
+      <mat-form-field appearance="fill">
+        <mat-label>Route</mat-label>
+        <input matInput formControlName="route" placeholder="e.g., /dashboard/users">
+        <mat-hint>Angular route for navigation</mat-hint>
+      </mat-form-field>
+
+      <!-- Order -->
+      @if (menuItemForm.get('order')) {
+        <mat-form-field appearance="fill">
+          <mat-label>Display Order</mat-label>
+          <input matInput type="number" formControlName="order" min="0">
+          @if (menuItemForm.get('order')?.errors?.['min']) {
+            <mat-error>Order must be at least 0</mat-error>
+          }
+        </mat-form-field>
+      }
+
+      <!-- Parent Menu Item -->
+      <mat-form-field appearance="fill">
+        <mat-label>Parent Menu Item</mat-label>
+        <mat-select formControlName="parentId">
+          <mat-option [value]="null">None (Top Level)</mat-option>
+          @for (parent of data.parentOptions; track parent.id) {
+            <mat-option [value]="parent.id">{{ parent.label }}</mat-option>
+          }
+        </mat-select>
+        <mat-hint>Select parent menu item to create a hierarchy</mat-hint>
+      </mat-form-field>
+
+      <!-- Permissions -->
+      <mat-form-field appearance="fill" class="col-span-2">
+        <mat-label>Required Permissions</mat-label>
+        <mat-select formControlName="requiredPermissions" multiple [compareWith]="comparePermissions">
+          @for (perm of data.permissions; track perm.action) {
+            <mat-option [value]="perm.action + ':' + perm.resource">
+              {{ perm.action }}:{{ perm.resource }}
+            </mat-option>
+          }
+        </mat-select>
+        <mat-hint>Select permissions required to see this menu item</mat-hint>
+      </mat-form-field>
+
+      <!-- Active Status -->
+      <div class="col-span-1 flex items-center">
+        <mat-slide-toggle formControlName="isActive" color="primary">
+          Active
+        </mat-slide-toggle>
+      </div>
+
+      <!-- Internal Flag -->
+      <div class="col-span-1 flex items-center">
+        <mat-slide-toggle formControlName="isInternal" color="primary">
+          Internal Only
+        </mat-slide-toggle>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="cancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="menuItemForm.invalid">
+      {{ isCreateMode ? 'Create' : 'Update' }}
+    </button>
+  </mat-dialog-actions>
+</form>

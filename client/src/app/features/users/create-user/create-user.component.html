@@ -1,0 +1,155 @@
+<div class="container mx-auto p-4">
+  <div class="max-w-2xl mx-auto">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-semibold">Create New User</h1>
+      <button mat-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon> Back to Users
+      </button>
+    </div>
+    
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <!-- Basic Information -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>User Information</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <mat-form-field>
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="username" placeholder="Enter username" title="Username input field">
+              @if (userForm.get('username')?.invalid && userForm.get('username')?.touched) {
+                <mat-error>Username is required (min 3 characters)</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Email</mat-label>
+              <input matInput type="email" formControlName="email" placeholder="Enter email address" title="Email input field">
+              @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+                <mat-error>Valid email is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <mat-form-field>
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstName" placeholder="Enter first name" title="First name input field">
+              @if (userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched) {
+                <mat-error>First name is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastName" placeholder="Enter last name" title="Last name input field">
+              @if (userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched) {
+                <mat-error>Last name is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
+          
+          <div class="grid grid-cols-1">
+            <mat-form-field>
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option value="active">Active</mat-option>
+                <mat-option value="inactive">Inactive</mat-option>
+                <mat-option value="pending">Pending</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Role Assignment Section -->
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Role Assignment</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- Search Roles -->
+          <mat-form-field class="w-full mb-4">
+            <mat-icon matPrefix class="mr-2">search</mat-icon>
+            <input 
+              matInput 
+              [formControl]="roleSearchCtrl"
+              placeholder="Search roles..."
+            >
+          </mat-form-field>
+      
+          <!-- Role Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @for (role of filteredRoles; track role.id) {
+              <mat-card class="role-card border border-gray-200">
+                <mat-card-header>
+                  <mat-checkbox
+                    [checked]="isRoleSelected(role.id)"
+                    (change)="toggleRole(role.id)"
+                    class="font-medium"
+                  >
+                    {{ role.name }}
+                  </mat-checkbox>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="mt-2">
+                    <div class="flex flex-wrap gap-1">
+                      @for (permission of getRolePermissions(role); track permission) {
+                        <mat-chip class="text-xs">
+                          {{ getPermissionDisplayName(permission) }}
+                        </mat-chip>
+                      }
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            }
+          </div>
+      
+          @if (!filteredRoles.length) {
+            <div class="text-center p-4 text-gray-500">
+              No roles match your search
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Selected Permissions Summary -->
+      @if (showPermissions) {
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Permissions Granted</mat-card-title>
+            <mat-card-subtitle>The selected roles grant the following permissions:</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="flex flex-wrap gap-2 mt-3">
+              @for (permission of selectedPermissions; track permission) {
+                <mat-chip color="primary">
+                  {{ getPermissionDisplayName(permission) }}
+                </mat-chip>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end space-x-4">
+        <button mat-button type="button" (click)="goBack()">Cancel</button>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          [disabled]="userForm.invalid || isLoading"
+        >
+          <mat-icon>person_add</mat-icon>
+          Create User
+        </button>
+        @if (isLoading) {
+          <mat-progress-spinner diameter="24" mode="indeterminate" class="ml-2"></mat-progress-spinner>
+        }
+      </div>
+    </form>
+  </div>
+</div>

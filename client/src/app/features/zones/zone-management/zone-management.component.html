@@ -1,0 +1,98 @@
+<div class="container mx-auto p-4">
+  <div class="flex justify-between items-center mb-4">
+    <h1 class="text-2xl font-bold">Delivery Zones Management</h1>
+    <button mat-raised-button color="primary" (click)="openZoneDialog()">
+      <mat-icon>add</mat-icon> Create Zone
+    </button>
+  </div>
+
+  <mat-card>
+    <mat-card-content>
+      <!-- Search and Filter -->
+      <div class="mb-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Filter</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search by name...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Loading Spinner -->
+      @if (loading$ | async; as loading) {
+        <div class="flex justify-center py-8">
+          <mat-spinner diameter="50"></mat-spinner>
+        </div>
+      }
+
+      
+      @else {
+        <!-- Zones Table -->
+        <div class="overflow-x-auto">
+          <table mat-table [dataSource]="dataSource" matSort class="w-full">
+            
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+              <td mat-cell *matCellDef="let zone"> {{zone.id}} </td>
+            </ng-container>
+            
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Zone Name </th>
+              <td mat-cell *matCellDef="let zone"> {{zone.name}} </td>
+            </ng-container>
+            
+            <!-- Fee Column -->
+            <ng-container matColumnDef="fee">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header> Delivery Fee </th>
+              <td mat-cell *matCellDef="let zone"> {{zone.fee | currency: 'XOF'}} </td>
+            </ng-container>
+            
+            <!-- Delivery Persons Column -->
+            <ng-container matColumnDef="deliveryPersons">
+              <th mat-header-cell *matHeaderCellDef> Delivery Staff </th>
+              <td mat-cell *matCellDef="let zone">
+                @if (getDeliveryPersonsCount(zone) > 0) {
+                  {{getDeliveryPersonsCount(zone)}} assigned
+                } @else {
+                  <span class="text-gray-500">No staff assigned</span>
+                }
+              </td>
+            </ng-container>
+            
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <td mat-cell *matCellDef="let zone">
+                <button mat-icon-button color="primary" (click)="openZoneDialog(zone)" matTooltip="Edit Zone">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="confirmDeleteZone(zone)" matTooltip="Delete Zone">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            
+            <!-- Table Header and Rows -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            
+            <!-- No Data Row -->
+            @if (dataSource.data.length === 0) {
+              <tr class="mat-row">
+                <td class="mat-cell py-4 text-center" [attr.colspan]="displayedColumns.length">
+                  <div class="flex flex-col items-center justify-center">
+                    <mat-icon class="text-gray-400 text-5xl mb-2">map</mat-icon>
+                    <p class="text-gray-500">No delivery zones found</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </table>
+          
+          <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>Assign Delivery for Order #{{data.order.id}}</h2>
+
+<mat-dialog-content>
+  @if (isLoading) {
+    <div class="flex justify-center py-4">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+    <div>
+      <div class="mb-4">
+        <p class="mb-2"><strong>Customer:</strong> {{data.order.user?.firstName}} {{data.order.user?.lastName}}</p>
+        <p class="mb-2">
+          <strong>Shipping Address:</strong> {{data.order.shippingAddress?.addressLine1}}, 
+          {{data.order.shippingAddress?.city}}
+        </p>
+        <p class="mb-2">
+          <strong>Zone:</strong> {{data.order.shippingAddress?.zone?.name}}
+        </p>
+        <p class="mb-2"><strong>Total:</strong> {{data.order.total}} FCFA</p>
+      </div>
+  
+      <div class="mb-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Select Delivery Person</mat-label>
+          <mat-select [(ngModel)]="selectedDeliveryPersonId" required>
+            @for (person of deliveryPersons; track person.id) {
+              <mat-option [value]="person.id">
+                {{person.user.firstName}} {{person.user.lastName}} 
+                ({{person.vehicleType}}, Rating: {{person.rating || 'N/A'}})
+              </mat-option>
+            }
+          </mat-select>
+          @if (!selectedDeliveryPersonId) {
+            <mat-error>Please select a delivery person</mat-error>
+          }
+        </mat-form-field>
+      </div>
+  
+      <div class="mb-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Notes (Optional)</mat-label>
+          <textarea matInput [(ngModel)]="notes" rows="3" placeholder="Add special delivery instructions or notes"></textarea>
+        </mat-form-field>
+      </div>
+  
+      @if (deliveryPersons.length === 0) {
+        <div class="p-4 bg-yellow-50 text-yellow-800 rounded mb-4">
+          <div class="flex items-start">
+            <mat-icon class="text-yellow-500 mr-2">warning</mat-icon>
+            <div>
+              <p class="font-medium">No available delivery persons</p>
+              <p class="text-sm">There are no delivery persons available for this zone. You may need to assign someone from a different zone or wait until someone becomes available.</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!selectedDeliveryPersonId || isLoading">
+    Assign Delivery
+  </button>
+</mat-dialog-actions>

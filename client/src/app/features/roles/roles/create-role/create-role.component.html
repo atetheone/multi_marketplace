@@ -1,0 +1,103 @@
+<div class="container mx-auto p-4">
+  <mat-card class="mb-6">
+    <mat-card-header>
+      <mat-card-title>Create New Role</mat-card-title>
+      <mat-card-subtitle>Define a new role with assigned permissions</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="roleForm" (ngSubmit)="onSubmit()" class="mt-4">
+        <div class="mb-4">
+          <mat-form-field class="w-full">
+            <mat-label>Role Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter role name">
+            @if (roleForm.get('name')?.hasError('required') && (roleForm.get('name')?.touched || formSubmitted)) {
+              <mat-error>Role name is required</mat-error>
+            }
+            @if (roleForm.get('name')?.hasError('minlength') && (roleForm.get('name')?.touched || formSubmitted)) {
+              <mat-error>Role name must be at least 3 characters</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <h3 class="text-lg font-medium mb-2">Permissions</h3>
+        <div class="flex justify-between mb-3">
+          <span class="text-sm text-gray-600">
+            Selected permissions: {{ getSelectedPermissionCount() }} / {{ getAllPermissions().length }}
+          </span>
+          <div>
+            <button mat-button color="primary" type="button" (click)="selectAll()">Select All</button>
+            <button mat-button color="warn" type="button" (click)="deselectAll()">Deselect All</button>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          @if (formSubmitted && roleForm.get('permissionIds')?.hasError('required')) {
+            <mat-error>At least one permission must be selected</mat-error>
+          }
+
+          @if (isLoading) {
+            <div class="flex justify-center my-4">
+              <mat-spinner diameter="40"></mat-spinner>
+            </div>
+          }
+
+          <!-- Permission Groups -->
+          @if (!isLoading) {
+            <mat-accordion>
+              @for (group of permissionGroups; track group; let i = $index) {
+                <mat-expansion-panel class="mb-2">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title class="flex items-center">
+                      <mat-checkbox
+                        [checked]="isGroupSelected(i)"
+                        [indeterminate]="isIndeterminate(i)"
+                        (change)="toggleAllPermissions(i, $event)"
+                        (click)="$event.stopPropagation()"
+                      ></mat-checkbox>
+                      <span class="ml-2 capitalize">
+                        {{ group.permissions[0]!.resourceDetails!.name! || 'Unknown' }} Permissions
+                      </span>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-3">
+                    @for (permission of group.permissions; track permission.id) {
+                      <mat-checkbox 
+                        [checked]="isPermissionSelected(permission.id)"
+                        (change)="togglePermission(permission.id)"
+                        class="mb-2"
+                      >
+                        <span class="capitalize">{{ permission.action }}</span>
+                        <small class="text-gray-500 block">{{ permission.resourceDetails.name }}</small>
+                      </mat-checkbox>
+                    }
+                  </div>
+                </mat-expansion-panel>
+              }
+            </mat-accordion>
+          }
+        </div>
+
+        <div class="flex justify-end gap-2 mt-4">
+          <button 
+            mat-button 
+            type="button" 
+            color="warn" 
+            (click)="cancel()"
+          >
+            Cancel
+          </button>
+          <button 
+            mat-raised-button 
+            type="submit" 
+            color="primary"
+            [disabled]="isLoading"
+          >
+            <mat-icon>save</mat-icon>
+            <span>Create Role</span>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,242 @@
+<div class="delivery-dashboard">
+  <!-- Header section -->
+  <div class="header-section mb-4">
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold">Deliveries Management</h1>
+      <div class="action-buttons">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          (click)="navigateToPersons()"
+          class="ml-2">
+          <mat-icon>people</mat-icon>
+          Manage Delivery Personnel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending orders section -->
+  @if (pendingOrders.length > 0) {
+    <mat-card class="mb-4">
+      <mat-card-header>
+        <mat-card-title>Pending Orders</mat-card-title>
+        <mat-card-subtitle>Orders ready to be assigned for delivery</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
+          @for (order of pendingOrders; track order.id) {
+            <mat-card class="border border-gray-200">
+              <mat-card-header>
+                <mat-card-title>Order #{{ order.id }}</mat-card-title>
+                <mat-card-subtitle>{{ order.createdAt | date:'medium' }}</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <p><strong>Items:</strong> {{ order.items.length }}</p>
+                <p><strong>Total:</strong> {{ order.total | currency: 'XOF' }}</p>
+                <p><strong>Status:</strong> {{ order.status }}</p>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-raised-button color="primary" (click)="openAssignDeliveryDialog(order)">
+                  <mat-icon>local_shipping</mat-icon>
+                  Assign Delivery
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Deliveries table section -->
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Deliveries</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Filters -->
+      <form [formGroup]="filterForm" class="flex flex-wrap gap-4 mb-4 p-4">
+        <mat-form-field appearance="fill">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            @for (option of deliveryStatusOptions; track option.value) {
+              <mat-option [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>From Date</mat-label>
+          <input matInput [matDatepicker]="fromPicker" formControlName="dateFrom">
+          <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>To Date</mat-label>
+          <input matInput [matDatepicker]="toPicker" formControlName="dateTo">
+          <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+          <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- <mat-form-field appearance="fill">
+          <button type="button" mat-button color="warn" (click)="resetFilters()">
+            <mat-icon>clear</mat-icon> Reset
+          </button>
+        </mat-form-field> -->
+
+        <div class="flex items-end">
+          <button type="button" mat-button color="warn" (click)="resetFilters()">
+            <mat-icon>clear</mat-icon> Reset
+          </button>
+        </div>
+      </form>
+
+      <!-- Search -->
+      <div class="p-4">
+        <mat-form-field appearance="fill" class="w-full">
+          <mat-label>Search</mat-label>
+          <input matInput (keyup)="applyFilter($event)" placeholder="Search deliveries...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Loading indicator -->
+      @if (loading | async) {
+        <div class="flex justify-center p-4">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table mat-table [dataSource]="dataSource" matSort class="w-full">
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+            <td mat-cell *matCellDef="let delivery">{{ delivery.id }}</td>
+          </ng-container>
+
+          <!-- Order Column -->
+          <ng-container matColumnDef="order">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Order</th>
+            <td mat-cell *matCellDef="let delivery">
+              <a [routerLink]="['/dashboard/orders', delivery.orderId]" class="text-blue-600 hover:underline">
+                #{{ delivery.orderId }}
+              </a>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+            <td mat-cell *matCellDef="let delivery">
+              <span [ngClass]="{
+                'bg-yellow-100 text-yellow-800': delivery.status === 'pending',
+                'bg-blue-100 text-blue-800': delivery.status === 'assigned',
+                'bg-purple-100 text-purple-800': delivery.status === 'shipped',
+                'bg-green-100 text-green-800': delivery.status === 'delivered',
+                'bg-red-100 text-red-800': delivery.status === 'cancelled',
+                'bg-orange-100 text-orange-800': delivery.status === 'returned'
+              }" class="px-2 py-1 rounded-full text-xs font-medium">
+                {{ delivery.status | titlecase }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Assigned To Column -->
+          <ng-container matColumnDef="assignedTo">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Assigned To</th>
+            <td mat-cell *matCellDef="let delivery">
+              @if (delivery.deliveryPerson) {
+                <a [routerLink]="['/dashboard/deliveries/persons/details', delivery.deliveryPersonId]"
+                  class="text-blue-600 hover:underline">
+                  {{ delivery.deliveryPerson?.user?.firstName }} {{ delivery.deliveryPerson?.user?.lastName }}
+                </a>
+              } @else {
+                <span>Not assigned</span>
+              }
+            </td>
+          </ng-container>
+
+          <!-- Other columns remain the same -->
+          <ng-container matColumnDef="assignedAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Assigned At</th>
+            <td mat-cell *matCellDef="let delivery">
+              {{ delivery.assignedAt ? (delivery.assignedAt | date:'short') : 'N/A' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="pickedAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Picked At</th>
+            <td mat-cell *matCellDef="let delivery">
+              {{ delivery.pickedAt ? (delivery.pickedAt | date:'short') : 'N/A' }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="deliveredAt">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Delivered At</th>
+            <td mat-cell *matCellDef="let delivery">
+              {{ delivery.deliveredAt ? (delivery.deliveredAt | date:'short') : 'N/A' }}
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let delivery">
+              <button mat-icon-button [matMenuTriggerFor]="actionsMenu" color="primary">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              
+              <mat-menu #actionsMenu="matMenu">
+                <button mat-menu-item (click)="viewDeliveryDetails(delivery.id)">
+                  <mat-icon>visibility</mat-icon>
+                  <span>View Details</span>
+                </button>
+                
+                @if (delivery.status === 'assigned') {
+                  <button mat-menu-item (click)="updateDeliveryStatus(delivery.id, 'shipped')">
+                    <mat-icon>check_circle_fill</mat-icon>
+                    <span>Mark as shipped</span>
+                  </button>
+                }
+                
+                @if (delivery.status === 'shipped') {
+                  <button mat-menu-item (click)="updateDeliveryStatus(delivery.id, 'delivered')">
+                    <mat-icon>check_circle</mat-icon>
+                    <span>Mark as Delivered</span>
+                  </button>
+                }
+                
+                @if (delivery.status !== 'delivered' && delivery.status !== 'cancelled') {
+                  <button mat-menu-item (click)="updateDeliveryStatus(delivery.id, 'cancelled')">
+                    <mat-icon>cancel</mat-icon>
+                    <span>Cancel Delivery</span>
+                  </button>
+                }
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <!-- No data row -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell text-center py-4" [attr.colspan]="displayedColumns.length">
+              No deliveries found
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Paginator -->
+      <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons></mat-paginator>
+    </mat-card-content>
+  </mat-card>
+</div>
