@@ -20,6 +20,7 @@ SET row_security = off;
 -- Name: permission_scope; Type: TYPE; Schema: public; Owner: jefjel_owner
 --
 
+
 CREATE TYPE public.permission_scope AS ENUM (
     'all',
     'tenant',
