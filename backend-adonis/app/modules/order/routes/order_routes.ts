@@ -12,7 +12,7 @@ router
       .use(middleware.role(['admin', 'super-admin', 'livreur']))
 
     router.get('/pending', [OrderController, 'getPendingOrders'])
-    
+
     router.get('/me', [OrderController, 'getUserOrders'])
     router.get(':id', [OrderController, 'show'])
     router.post(':id/cancel', [OrderController, 'cancel'])
