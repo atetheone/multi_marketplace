@@ -53,6 +53,14 @@
               ],
               "outputHashing": "all"
             },
+            "fr": {
+              "aot": true,
+              "outputPath": "dist/fr/",
+              "i18nFile": "src/locale/messages.fr.xlf",
+              "i18nFormat": "xlf",
+              "i18nLocale": "fr",
+              "i18nMissingTranslation": "error"
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
@@ -73,6 +81,9 @@
             "production": {
               "buildTarget": "client:build:production"
             },
+            "fr": {
+              "buildTarget": "client:build:fr"
+            },
             "development": {
               "buildTarget": "client:build:development"
             }
@@ -83,7 +94,10 @@
           }
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "outputPath": "src/locale"
+          }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",

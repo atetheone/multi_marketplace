@@ -62,20 +62,20 @@
     <mat-menu #userMenu="matMenu">
       <button mat-menu-item routerLink="/dashboard/profile">
         <mat-icon>person</mat-icon>
-        <span>Profile</span>
+        <span i18n="@@admin-navbar.profile">Profil</span>
       </button>
       <button mat-menu-item routerLink="/dashboard">
         <mat-icon>dashboard</mat-icon>
-        <span>Dashboard</span>
+        <span i18n="@@admin-navbar.dashboard">Tableau de bord</span>
       </button>
       <button mat-menu-item routerLink="/dashboard/settings">
         <mat-icon>settings</mat-icon>
-        <span>Settings</span>
+        <span i18n="@@admin-navbar.settings">Paramètres</span>
       </button>
       <mat-divider></mat-divider>
       <button mat-menu-item (click)="logout()">
         <mat-icon>exit_to_app</mat-icon>
-        <span>Logout</span>
+        <span i18n="@@admin-navbar.logout">Déconnexion</span>
       </button>
     </mat-menu>
   </div>

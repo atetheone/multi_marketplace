@@ -1,81 +1,82 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
   <mat-card class="w-full max-w-md bg-white shadow-lg rounded-lg">
     <div class="p-8">
-      <mat-card-title class="text-center text-2xl font-bold mb-8">Register</mat-card-title>
+      <mat-card-title class="text-center text-2xl font-bold mb-8" i18n="@@register.title">S'inscrire</mat-card-title>
       <mat-card-content>
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
           <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Username</mat-label>
+            <mat-label i18n="@@register.username">Nom d'utilisateur</mat-label>
             <input matInput formControlName="username" class="w-full">
             @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
-              <mat-error>
-                Username must be at least 3 characters
+              <mat-error i18n="@@register.username.error">
+                Le nom d'utilisateur doit contenir au moins 3 caractères
               </mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Email</mat-label>
+            <mat-label i18n="@@register.email">Adresse e-mail</mat-label>
             <input matInput type="email" formControlName="email" class="w-full">
             @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-              <mat-error>
-                Please enter a valid email address
+              <mat-error i18n="@@register.email.error">
+                Veuillez entrer une adresse e-mail valide
               </mat-error>
             }
           </mat-form-field>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <mat-form-field appearance="fill" class="w-full">
-              <mat-label>First Name</mat-label>
+              <mat-label i18n="@@register.firstName">Prénom</mat-label>
               <input matInput formControlName="firstName">
               @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
-                <mat-error>
-                  First name is required
+                <mat-error i18n="@@register.firstName.error">
+                  Le prénom est requis
                 </mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="fill" class="w-full">
-              <mat-label>Last Name</mat-label>
+              <mat-label i18n="@@register.lastName">Nom de famille</mat-label>
               <input matInput formControlName="lastName">
               @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
-                <mat-error>
-                  Last name is required
+                <mat-error i18n="@@register.lastName.error">
+                  Le nom de famille est requis
                 </mat-error>
               }
             </mat-form-field>
           </div>
 
           <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Password</mat-label>
+            <mat-label i18n="@@register.password">Mot de passe</mat-label>
             <input matInput type="password" formControlName="password">
             @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-              <mat-error>
-                Password must be at least 6 characters
+              <mat-error i18n="@@register.password.error">
+                Le mot de passe doit contenir au moins 6 caractères
               </mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="fill" class="w-full">
-            <mat-label>Confirm Password</mat-label>
+            <mat-label i18n="@@register.confirmPassword">Confirmer le mot de passe</mat-label>
             <input matInput type="password" formControlName="confirmPassword">
             @if (registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched) {
-              <mat-error>
-                Passwords do not match
+              <mat-error i18n="@@register.confirmPassword.error">
+                Les mots de passe ne correspondent pas
               </mat-error>
             }
           </mat-form-field>
 
           <button mat-raised-button color="primary" type="submit" 
                   [disabled]="registerForm.invalid"
-                  class="w-full py-3 rounded-lg transition-colors">
-            Register
+                  class="w-full py-3 rounded-lg transition-colors"
+                  i18n="@@register.button">
+            S'inscrire
           </button>
         </form>
       </mat-card-content>
       <mat-card-actions class="flex justify-center mt-4">
-        <a mat-button routerLink="/login" class="text-primary-600 hover:text-primary-700">
-          Already have an account? Login
+        <a mat-button routerLink="/login" class="text-primary-600 hover:text-primary-700" i18n="@@register.alreadyHaveAccount">
+          Vous avez déjà un compte ? Se connecter
         </a>
       </mat-card-actions>
     </div>

@@ -4,11 +4,12 @@
       [routerLink]="item.route"
       routerLinkActive="active-link"
       [matTooltip]="!isExpanded ? item.label : ''"
+      [attr.i18n-matTooltip]="'@@sidenav.' + item.id + '.tooltip'"
       matTooltipPosition="after"
     >
       <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
       @if (isExpanded) {
-        <span matListItemTitle>{{ item.label }}</span>
+        <span matListItemTitle [attr.i18n]="'@@sidenav.' + item.id + '.label'">{{ item.label }}</span>
       }
     </mat-list-item>
   }

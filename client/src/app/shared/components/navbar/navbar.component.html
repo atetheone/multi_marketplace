@@ -28,7 +28,7 @@
     <!-- Logo -->
     <div class="flex items-center">
       <a routerLink="/" class="flex items-center space-x-2">
-        <img src="assets/logo-jefjel.png" alt="Logo" class="h-8 w-auto">
+        <img src="assets/logo-jefjel.png" alt="Logo" i18n-alt="@@navbar.logo-alt" class="h-8 w-auto">
         <span class="text-xl font-semibold text-gray-900">JEFJEL</span>
       </a>
     </div>
@@ -77,18 +77,18 @@
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="logout()">
             <mat-icon>exit_to_app</mat-icon>
-            <span>Logout</span>
+            <span i18n="@@navbar.logout">Déconnexion</span>
           </button>
         </mat-menu>
       } @else {
         <div class="flex items-center space-x-4">
           <a mat-button routerLink="/login">
-            Login
+            <span i18n="@@navbar.login">Connexion</span>
           </a>
           <a mat-raised-button 
              color="primary" 
              routerLink="/register">
-            Register
+            <span i18n="@@navbar.register">S'inscrire</span>
           </a>
         </div>
       }
