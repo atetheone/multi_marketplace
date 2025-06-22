@@ -23,6 +23,15 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .notNullable()
 
+      // SECURITY FIX: Add tenant_id for multi-tenant isolation
+      table
+        .integer('tenant_id')
+        .unsigned()
+        .references('id')
+        .inTable('tenants')
+        .onDelete('CASCADE')
+        .notNullable()
+
       table.text('notes').nullable()
 
       table.timestamp('assigned_at', { useTz: true }).nullable()
@@ -33,6 +42,8 @@ export default class extends BaseSchema {
       // Indexes
       table.index(['order_id'])
       table.index(['delivery_person_id'])
+      table.index(['tenant_id'])
+      table.index(['tenant_id', 'delivery_person_id']) // Composite index for performance
     })
   }
 

@@ -18,6 +18,18 @@ export default class extends BaseSchema {
         .onDelete('CASCADE')
         .nullable()
 
+      // Resource relationship for new RBAC system
+      table
+        .integer('resource_id')
+        .unsigned()
+        .references('id')
+        .inTable('resources')
+        .onDelete('CASCADE')
+        .nullable()
+
+      // Permission scope (all, tenant, own, dept)
+      table.string('scope').nullable()
+
       table.timestamp('created_at', { useTz: true }).defaultTo(this.now())
       table.timestamp('updated_at', { useTz: true }).defaultTo(this.now())
 
@@ -26,6 +38,7 @@ export default class extends BaseSchema {
       table.index(['tenant_id'])
       table.index(['resource'])
       table.index(['action'])
+      table.index(['resource_id'])
     })
   }
 

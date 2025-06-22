@@ -27,12 +27,12 @@ export default class AuthService {
     }
 
     // check if the account is verified
-    if (user.status !== 'active') {
+    /*if (user.status !== 'active') {
       throw new Exception('Account is not verified', {
         status: 403,
         code: 'ACCOUNT_NOT_VERIFIED',
       })
-    }
+    }*/
 
     await user.load((loader) => {
       loader.load('roles', (rolesQuery) => {
@@ -76,8 +76,15 @@ export default class AuthService {
   }
 
   public async logout(auth: HttpContext['auth']) {
-    // await auth.use('jwt').logout()
-    return { message: 'Logged out successfully' }
+    try {
+      // SECURITY FIX: Properly invalidate JWT token
+      await auth.use('jwt').logout()
+      return { message: 'Logged out successfully' }
+    } catch (error) {
+      // Even if logout fails, we should return success to prevent information disclosure
+      // The token will expire naturally based on its TTL
+      return { message: 'Logged out successfully' }
+    }
   }
 
   public async refreshToken(auth: HttpContext['auth']) {

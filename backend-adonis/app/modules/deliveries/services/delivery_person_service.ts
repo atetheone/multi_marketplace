@@ -6,35 +6,40 @@ import { DateTime } from 'luxon'
 
 @inject()
 export class DeliveryPersonService {
-  private normalizeLicenseExpiryFormat(licenceExpiry: any) {
-    if (licenseExpiry) {
-      if (data.licenseExpiry instanceof DateTime) {
-        licenseExpiry = data.licenseExpiry
-      } else if (typeof data.licenseExpiry === 'string') {
-        // Try parsing as ISO string first
-        licenseExpiry = DateTime.fromISO(data.licenseExpiry)
-
-        // If invalid, try other common formats
-        if (!licenseExpiry.isValid) {
-          // Try SQL date format
-          licenseExpiry = DateTime.fromSQL(data.licenseExpiry)
-        }
-
-        if (!licenseExpiry.isValid) {
-          // Try JS date format
-          licenseExpiry = DateTime.fromJSDate(new Date(data.licenseExpiry))
-        }
-
-        if (!licenseExpiry.isValid) {
-          throw new Error('Invalid date format for licenseExpiry')
-        }
-      } else if (data.licenseExpiry instanceof Date) {
-        licenseExpiry = DateTime.fromJSDate(data.licenseExpiry)
-      }
-
-      return licenceExpiry
+  private normalizeLicenseExpiryFormat(licenseExpiry: any): DateTime | undefined {
+    if (!licenseExpiry) {
+      return undefined
     }
 
+    let result: DateTime
+
+    if (licenseExpiry instanceof DateTime) {
+      result = licenseExpiry
+    } else if (typeof licenseExpiry === 'string') {
+      // Try parsing as ISO string first
+      result = DateTime.fromISO(licenseExpiry)
+
+      // If invalid, try other common formats
+      if (!result.isValid) {
+        // Try SQL date format
+        result = DateTime.fromSQL(licenseExpiry)
+      }
+
+      if (!result.isValid) {
+        // Try JS date format
+        result = DateTime.fromJSDate(new Date(licenseExpiry))
+      }
+
+      if (!result.isValid) {
+        throw new Error('Invalid date format for licenseExpiry')
+      }
+    } else if (licenseExpiry instanceof Date) {
+      result = DateTime.fromJSDate(licenseExpiry)
+    } else {
+      throw new Error('Invalid licenseExpiry type')
+    }
+
+    return result
   }
   async createDeliveryPerson(userId: number, tenantId: number, data: any) {
     // Verify user has delivery-person role
@@ -44,9 +49,7 @@ export class DeliveryPersonService {
       .firstOrFail()
 
     // Properly handle the licenseExpiry date conversion to DateTime
-    let licenseExpiry: DateTime | undefined
-
-    licenceExpiry = this.normalizeLicenseExpiryFormat(licenceExpiry)
+    const licenseExpiry = this.normalizeLicenseExpiryFormat(data.licenseExpiry)
 
     return await DeliveryPerson.create({
       userId,

@@ -36,9 +36,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare password: string
 
   @column()
-  declare tenantId: number
-
-  @column()
   declare status: 'active' | 'inactive' | 'suspended' | 'pending'
 
   @column.dateTime({ autoCreate: true })
@@ -86,13 +83,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
    * Check if user has the specified permission through any of their roles
    */
   async hasPermission(permission: string): Promise<boolean> {
-    const roles = await this.related('roles').query()
-      .preload('permissions')
+    const roles = await this.related('roles').query().preload('permissions')
 
-    return roles.some((role) => 
-      role.permissions.some(perm => 
-        `${perm.resource}:${perm.action}` === permission
-      )
+    return roles.some((role) =>
+      role.permissions.some((perm) => `${perm.resource}:${perm.action}` === permission)
     )
   }
 
@@ -100,14 +94,11 @@ export default class User extends compose(BaseModel, AuthFinder) {
    * Check if user has all of the specified permissions
    */
   async hasAllPermissions(permissions: string[]): Promise<boolean> {
-    const roles = await this.related('roles').query()
-      .preload('permissions')
+    const roles = await this.related('roles').query().preload('permissions')
 
-    return permissions.every(requiredPermission =>
+    return permissions.every((requiredPermission) =>
       roles.some((role) =>
-        role.permissions.some(perm =>
-          `${perm.resource}:${perm.action}` === requiredPermission
-        )
+        role.permissions.some((perm) => `${perm.resource}:${perm.action}` === requiredPermission)
       )
     )
   }

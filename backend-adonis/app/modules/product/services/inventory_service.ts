@@ -19,9 +19,10 @@ export class InventoryService {
     const trx = await db.transaction()
 
     try {
-      const product = await Product.query()
+      const product = await Product.query({ client: trx })
         .where('id', productId)
         .where('tenant_id', tenantId)
+        .forUpdate()
         .preload('inventory')
         .first()
 
@@ -151,7 +152,7 @@ export class InventoryService {
     try {
       const inventory = await Inventory.query()
         .where('product_id', productId)
-        // .where('tenant_id', tenantId)
+        .where('tenant_id', tenantId)
         .first()
 
       if (!inventory) {

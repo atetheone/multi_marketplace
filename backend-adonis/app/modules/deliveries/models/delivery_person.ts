@@ -15,22 +15,16 @@ export default class DeliveryPerson extends BaseModel {
   declare userId: number
 
   @column()
-  declare tenantId: number
-
-  @column()
   declare isActive: boolean
 
   @column()
   declare isAvailable: boolean
 
-  // @column()
-  // declare workingHours: any
+  @column.dateTime()
+  declare lastActiveAt: DateTime | null
 
   @column.dateTime()
-  declare lastActiveAt: DateTime
-
-  @column.dateTime()
-  declare lastDeliveryAt: DateTime
+  declare lastDeliveryAt: DateTime | null
 
   @column()
   declare vehicleType: 'motorcycle' | 'bicycle' | 'car' | 'van'
@@ -39,10 +33,10 @@ export default class DeliveryPerson extends BaseModel {
   declare vehiclePlateNumber: string
 
   @column()
-  declare vehicleModel: string
+  declare vehicleModel: string | null
 
   @column()
-  declare vehicleYear: number
+  declare vehicleYear: number | null
 
   @column()
   declare licenseNumber: string
@@ -72,7 +66,17 @@ export default class DeliveryPerson extends BaseModel {
   declare totalReviews: number
 
   @column()
-  declare notes: string
+  declare notes: string | null
+
+  @column.dateTime()
+  declare verifiedAt: DateTime | null
+
+  @column()
+  declare verifiedBy: number | null
+
+  // TENANT ISOLATION: Delivery persons belong to a tenant
+  @column()
+  declare tenantId: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
@@ -80,17 +84,14 @@ export default class DeliveryPerson extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
-  @column.dateTime()
-  declare verifiedAt: DateTime
-
-  @column()
-  declare verifiedBy: number
-
   @belongsTo(() => User)
   declare user: BelongsTo<typeof User>
 
   @belongsTo(() => Tenant)
   declare tenant: BelongsTo<typeof Tenant>
+
+  @belongsTo(() => User, { foreignKey: 'verifiedBy' })
+  declare verifier: BelongsTo<typeof User>
 
   @manyToMany(() => DeliveryZone, {
     pivotTable: 'delivery_person_zones',

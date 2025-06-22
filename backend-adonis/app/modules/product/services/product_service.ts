@@ -142,7 +142,11 @@ export class ProductService {
   }
 
   async uploadProductImages(productId: number, files: MultipartFile[], tenantId: number) {
-    const product = await Product.findOrFail(productId)
+    const product = await Product.query()
+      .where('id', productId)
+      .where('tenant_id', tenantId)
+      .firstOrFail()
+    // const product = await Product.findOrFail(productId)
 
     for (const [index, file] of files.entries()) {
       const { url, filename } = await this.cloudinaryService.uploadImage(file)

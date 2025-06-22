@@ -16,7 +16,33 @@ export default class Resource extends BaseModel {
   @column()
   declare isActive: boolean
 
-  @column()
+  @column({
+    prepare: (value: string[]) => JSON.stringify(value),
+    consume: (value: string) => {
+      // Handle null/undefined values
+      if (!value) {
+        return []
+      }
+      
+      // If it's already an array, return it
+      if (Array.isArray(value)) {
+        return value
+      }
+      
+      // If it's a string, try to parse as JSON
+      if (typeof value === 'string') {
+        try {
+          const parsed = JSON.parse(value)
+          return Array.isArray(parsed) ? parsed : [value]
+        } catch {
+          // If it's not valid JSON, treat as a single action
+          return [value]
+        }
+      }
+      
+      return []
+    },
+  })
   declare availableActions: string[]
 
   @column()

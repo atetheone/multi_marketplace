@@ -1,8 +1,9 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import User from '#user/models/user'
-import Role from '#auth/models/role'
+import Role from '#role/models/role'
 import { Exception } from '@adonisjs/core/exceptions'
+import PermissionService from '#services/permission_service'
 
 /**
  * Auth middleware is used authenticate HTTP requests and deny

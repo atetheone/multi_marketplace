@@ -7,7 +7,7 @@ import MenuItem from '#navigation/models/menu_item'
 
 export default class Tenant extends BaseModel {
   @column({ isPrimary: true })
-  declare id: string
+  declare id: number
 
   @column()
   declare slug: string

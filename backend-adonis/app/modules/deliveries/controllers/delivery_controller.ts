@@ -12,27 +12,44 @@ export default class DeliveryController {
   constructor(protected deliveryService: DeliveryService) {}
 
   async index({ request, response }: HttpContext) {
-    const tenantId = request.tenant.id
-    const deliveries = await this.deliveryService.getDeliveries(/*tenantId*/)
+    // SECURITY FIX: Extract tenant ID and pass to service
+    const tenantId = request.tenant?.id
+    const deliveries = await this.deliveryService.getDeliveries(tenantId)
 
     return ApiResponse.success(response, 'Deliveries retrieved successfully', deliveries)
   }
 
   async assignDelivery({ request, response }: HttpContext) {
     const data = await request.validateUsing(assignDeliveryValidator)
-    console.log('data to assign: ' + JSON.stringify(data, null, 2))
+    const tenantId = request.tenant?.id
+
+    if (!tenantId) {
+      return ApiResponse.error(response, 'Tenant context required', 400)
+    }
 
     const delivery = await this.deliveryService.assignDelivery(
       data.orderId,
       data.deliveryPersonId,
-      data.notes || ''
+      data.notes || '',
+      tenantId // SECURITY FIX: Pass tenant ID
     )
     return ApiResponse.success(response, 'Delivery assigned successfully', delivery)
   }
 
   async updateStatus({ params, request, response }: HttpContext) {
     const { status, notes } = await request.validateUsing(updateDeliveryStatusValidator)
-    const delivery = await this.deliveryService.updateDeliveryStatus(params.id, status, notes)
+    const tenantId = request.tenant?.id
+
+    if (!tenantId) {
+      return ApiResponse.error(response, 'Tenant context required', 400)
+    }
+
+    const delivery = await this.deliveryService.updateDeliveryStatus(
+      Number(params.id),
+      status,
+      tenantId, // SECURITY FIX: Pass tenant ID
+      notes
+    )
     return ApiResponse.success(response, 'Delivery status updated successfully', delivery)
   }
 

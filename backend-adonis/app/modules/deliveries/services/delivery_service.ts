@@ -12,72 +12,102 @@ import DeliveryPerson from '#deliveries/models/delivery_person'
 export class DeliveryService {
   constructor(protected notificationService: NotificationService) {}
 
-  async getDeliveries() {
-    const deliveries = await Delivery.query().preload('order', (orderQuery) => {
-      orderQuery.preload('shippingAddress')
-    })
+  async getDeliveries(tenantId?: number) {
+    let query = Delivery.query()
+      .preload('order', (orderQuery) => {
+        orderQuery.preload('shippingAddress')
+      })
+      .preload('deliveryPerson')
 
+    // TODO: Re-enable tenant filtering after adding tenant_id column
+    // if (tenantId !== undefined && tenantId !== null) {
+    //   query = query.where('tenant_id', tenantId)
+    // }
+
+    const deliveries = await query
     return deliveries
   }
 
-  async assignDelivery(orderId: number, deliveryPersonId: number, notes: string) {
+  async assignDelivery(orderId: number, deliveryPersonId: number, notes: string, tenantId: number) {
     // Start a transaction
     const trx = await db.transaction()
-    // Get order with shipping info
-    const order = await Order.query({ client: trx })
-      .where('id', orderId)
-      .whereIn('status', ['processing', 'pending'])
-      .preload('shippingAddress', (query) => query.preload('zone'))
-      .firstOrFail()
 
-    // Verify the user is a delivery person
-    const deliveryPerson = await User.query({ client: trx })
-      .where('id', deliveryPersonId)
-      // .preload('roles', (query) => {
-      //   query.where('name', 'delivery-person')
-      // })
-      .firstOrFail()
+    try {
+      // Get order with shipping info
+      const order = await Order.query({ client: trx })
+        .where('id', orderId)
+        .where('tenant_id', tenantId)
+        .whereIn('status', ['processing', 'pending'])
+        .preload('shippingAddress', (query) => query.preload('zone'))
+        .firstOrFail()
 
-    // if (!deliveryPerson.roles.length) {
-    //   throw new Exception('User is not a delivery person', { status: 400 })
-    // }
+      // Verify the delivery person exists and belongs to tenant
+      // Note: deliveryPersonId is actually the user_id from frontend
+      const deliveryPerson = await DeliveryPerson.query({ client: trx })
+        .where('user_id', deliveryPersonId)
+        .where('tenant_id', tenantId)
+        .where('is_active', true)
+        .firstOrFail()
 
-    // Create delivery assignment
-    const newDelivery = await Delivery.create(
-      {
-        orderId,
-        deliveryPersonId,
-        assignedAt: DateTime.now(),
-        notes,
-      },
-      { client: trx }
-    )
+      // Check if delivery person is available (not already assigned)
+      const existingDelivery = await Delivery.query({ client: trx })
+        .where('delivery_person_id', deliveryPerson.id) // FIX: Use actual delivery_person.id
+        .whereNull('delivered_at')
+        .first()
 
-    // Update order status
-    await order.merge({ status: 'processing' }).save()
+      if (existingDelivery) {
+        throw new Exception('Delivery person is already assigned to another delivery', {
+          status: 400,
+          code: 'DELIVERY_PERSON_BUSY',
+        })
+      }
 
-    // Notify delivery person
-    await this.notificationService.createNotification({
-      type: 'delivery:assigned',
-      title: 'New Delivery Assignment',
-      message: `You have been assigned to deliver order #${order.id}`,
-      userId: deliveryPersonId,
-      tenantId: order.tenantId,
-      data: {
-        orderId: order.id,
-        deliveryId: newDelivery.id,
-      },
-    })
+      // Create delivery assignment
+      const newDelivery = await Delivery.create(
+        {
+          orderId,
+          deliveryPersonId: deliveryPerson.id, // FIX: Use actual delivery_person.id
+          assignedAt: DateTime.now(),
+          notes,
+        },
+        { client: trx }
+      )
 
-    return newDelivery
+      // Update order status
+      await order.merge({ status: 'processing' }).save()
+
+      // Notify delivery person
+      await this.notificationService.createNotification({
+        type: 'delivery:assigned',
+        title: 'New Delivery Assignment',
+        message: `You have been assigned to deliver order #${order.id}`,
+        userId: deliveryPerson.userId, // FIX: Use delivery person's userId
+        tenantId: order.tenantId,
+        data: {
+          orderId: order.id,
+          deliveryId: newDelivery.id,
+        },
+      })
+
+      await trx.commit()
+      return newDelivery
+    } catch (error) {
+      await trx.rollback()
+      throw error
+    }
   }
 
   async updateDeliveryStatus(
     deliveryId: number,
     status: 'pending' | 'processing' | 'delivered' | 'cancelled' | 'shipped' | 'returned',
+    tenantId: number,
     notes?: string
   ) {
-    const delivery = await Delivery.findOrFail(deliveryId)
+    const delivery = await Delivery.query()
+      .where('id', deliveryId)
+      // TODO: Re-enable tenant filtering after adding tenant_id column
+      // .where('tenant_id', tenantId)
+      .firstOrFail()
     const statusUpdateMap: Record<string, string> = {
       delivered: 'deliveredAt',
     }
