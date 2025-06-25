@@ -1,57 +1,218 @@
-<div class="max-w-4xl mx-auto p-4">
+<div class="container mx-auto px-4 py-8">
   @if (cart$ | async; as cart) {
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Shopping Cart</h1>
-      <button mat-raised-button 
-              color="warn" 
-              (click)="clearCart(cart.id)" 
-              [disabled]="!cart?.items?.length">
-        Clear Cart
-      </button>
+    <!-- Header Section -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Panier d'Achat</h1>
+        <p class="text-gray-600">
+          {{cart?.items?.length || 0}} article{{(cart?.items?.length || 0) !== 1 ? 's' : ''}} dans votre panier
+        </p>
+      </div>
+      
+      <div class="flex items-center space-x-3">
+        <button 
+          type="button"
+          mat-button 
+          routerLink="/marketplace" 
+          class="text-blue-600 hover:text-blue-700 transition-colors"
+        >
+          <mat-icon class="mr-1">arrow_back</mat-icon>
+          Continuer les Achats
+        </button>
+        
+        <button 
+          type="button"
+          mat-button 
+          color="warn" 
+          (click)="clearCart(cart.id)" 
+          [disabled]="!cart?.items?.length"
+          class="text-red-600 hover:text-red-700 transition-colors"
+        >
+          <mat-icon class="mr-1">delete_sweep</mat-icon>
+          Vider le Panier
+        </button>
+      </div>
     </div>
 
     @if (cart?.items?.length) {
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Cart Items -->
-        <div class="md:col-span-2">
-          @for (item of cart.items; track item.id) {
-            <app-cart-item
-              [item]="item"
-              (quantityChanged)="updateQuantity(item.id, $event)"
-              (remove)="removeItem(item.id)"
-            />
-          }
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Cart Items Section -->
+        <div class="lg:w-2/3">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <h2 class="text-lg font-semibold text-gray-900">Articles Sélectionnés</h2>
+            </div>
+            
+            <div class="divide-y divide-gray-200">
+              @for (item of cart.items; track item.id) {
+                <div class="p-6 hover:bg-gray-50 transition-colors">
+                  <app-cart-item
+                    [item]="item"
+                    (quantityChanged)="updateQuantity(item.id, $event)"
+                    (remove)="removeItem(item.id)"
+                  />
+                </div>
+              }
+            </div>
+          </div>
         </div>
 
-        <!-- Cart Summary -->
-        <div class="md:col-span-1">
-          <mat-card class="p-4">
-            <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Subtotal</span>
-                <span>{{getTotal(cart)}} FCFA</span>
+        <!-- Order Summary Section -->
+        <div class="lg:w-1/3">
+          <div class="sticky top-24">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <h2 class="text-lg font-semibold text-gray-900">Résumé de la Commande</h2>
+              </div>
+              
+              <div class="p-6 space-y-4">
+                <!-- Order Items Summary -->
+                <div class="space-y-3">
+                  @for (item of cart.items; track item.id) {
+                    <div class="flex justify-between items-center text-sm">
+                      <div class="flex-1 pr-4">
+                        <p class="font-medium text-gray-900 truncate">{{item.product.name}}</p>
+                        <p class="text-gray-500">Qté: {{item.quantity}}</p>
+                      </div>
+                      <p class="font-medium text-gray-900">
+                        {{(item.product.price * item.quantity) | currency:'XOF':'symbol':'1.0-0'}}
+                      </p>
+                    </div>
+                  }
+                </div>
+                
+                <mat-divider></mat-divider>
+                
+                <!-- Price Breakdown -->
+                <div class="space-y-2">
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Sous-total</span>
+                    <span class="font-medium text-gray-900">{{getTotal(cart) | currency:'XOF':'symbol':'1.0-0'}}</span>
+                  </div>
+                  
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">Frais de livraison</span>
+                    <span class="text-sm text-gray-500">Calculés au checkout</span>
+                  </div>
+                  
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-600">TVA incluse</span>
+                    <span class="text-sm text-gray-500">{{(getTotal(cart) * 0.18) | currency:'XOF':'symbol':'1.0-0'}}</span>
+                  </div>
+                </div>
+                
+                <mat-divider></mat-divider>
+                
+                <!-- Total -->
+                <div class="flex justify-between items-center">
+                  <span class="text-lg font-semibold text-gray-900">Total</span>
+                  <span class="text-xl font-bold text-blue-600">{{getTotal(cart) | currency:'XOF':'symbol':'1.0-0'}}</span>
+                </div>
+                
+                <!-- Security Badge -->
+                <div class="flex items-center justify-center p-3 bg-green-50 rounded-lg">
+                  <mat-icon class="text-green-600 mr-2 w-5 h-5" style="font-size: 1.25rem; height: 1.25rem; width: 1.25rem;">security</mat-icon>
+                  <span class="text-sm text-green-700 font-medium">Paiement Sécurisé</span>
+                </div>
+                
+                <!-- Checkout Button -->
+                <button 
+                  type="button"
+                  mat-raised-button 
+                  color="primary" 
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-medium transition-colors"
+                  (click)="proceedToCheckout()"
+                >
+                  <mat-icon class="mr-2">payment</mat-icon>
+                  Passer la Commande
+                </button>
+                
+                <!-- Continue Shopping Link -->
+                <div class="text-center">
+                  <button 
+                    type="button"
+                    mat-button 
+                    routerLink="/marketplace" 
+                    class="text-blue-600 hover:text-blue-700 text-sm transition-colors"
+                  >
+                    ou continuer vos achats
+                  </button>
+                </div>
               </div>
             </div>
-            <button mat-raised-button 
-                    color="primary" 
-                    class="w-full mt-4"
-                    (click)="proceedToCheckout()">
-              Proceed to Checkout
-            </button>
-          </mat-card>
+            
+            <!-- Trust Signals -->
+            <div class="mt-6 grid grid-cols-2 gap-4">
+              <div class="text-center p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                <mat-icon class="text-blue-600 mb-2">local_shipping</mat-icon>
+                <p class="text-xs text-gray-600 font-medium">Livraison Rapide</p>
+                <p class="text-xs text-gray-500">24-48h à Dakar</p>
+              </div>
+              
+              <div class="text-center p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+                <mat-icon class="text-green-600 mb-2">verified_user</mat-icon>
+                <p class="text-xs text-gray-600 font-medium">Achat Sécurisé</p>
+                <p class="text-xs text-gray-500">Garantie Satisfait</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     } @else {
-      <div class="text-center py-12">
-        <mat-icon class="text-6xl text-gray-400">shopping_cart</mat-icon>
-        <p class="mt-4 text-gray-600">Your cart is empty</p>
-        <button mat-raised-button 
-                color="primary" 
-                routerLink="/marketplace" 
-                class="mt-4">
-          Continue Shopping
-        </button>
+      <!-- Empty Cart State -->
+      <div class="text-center py-16">
+        <div class="max-w-md mx-auto">
+          <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <mat-icon class="text-4xl text-gray-400">shopping_cart</mat-icon>
+          </div>
+          
+          <h2 class="text-2xl font-bold text-gray-900 mb-4">Votre Panier est Vide</h2>
+          <p class="text-gray-600 mb-8">
+            Découvrez nos produits et ajoutez vos articles préférés pour commencer vos achats.
+          </p>
+          
+          <div class="space-y-4">
+            <button 
+              type="button"
+              mat-raised-button 
+              color="primary" 
+              routerLink="/marketplace" 
+              class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+            >
+              <mat-icon class="mr-2">store</mat-icon>
+              Explorer le Marketplace
+            </button>
+            
+            <div class="text-center">
+              <button 
+                type="button"
+                mat-button 
+                routerLink="/" 
+                class="text-blue-600 hover:text-blue-700 text-sm transition-colors"
+              >
+                Retour à l'Accueil
+              </button>
+            </div>
+          </div>
+          
+          <!-- Featured Categories (Optional) -->
+          <div class="mt-12 grid grid-cols-3 gap-4">
+            <div class="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+              <mat-icon class="text-blue-600 mb-2">phone_android</mat-icon>
+              <p class="text-xs font-medium">Électronique</p>
+            </div>
+            
+            <div class="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+              <mat-icon class="text-green-600 mb-2">checkroom</mat-icon>
+              <p class="text-xs font-medium">Mode</p>
+            </div>
+            
+            <div class="text-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+              <mat-icon class="text-purple-600 mb-2">home</mat-icon>
+              <p class="text-xs font-medium">Maison</p>
+            </div>
+          </div>
+        </div>
       </div>
     }
   }

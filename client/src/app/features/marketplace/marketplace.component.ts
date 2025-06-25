@@ -44,6 +44,7 @@ export class MarketplaceComponent implements OnInit {
   filteredMarketplaces: Market[] = [];
   selectedCategory = '';
   searchTerm: string = '';
+  searchQuery: string = '';
   selectedCategories: { [key: string]: boolean } = {};
 
 
@@ -89,7 +90,7 @@ export class MarketplaceComponent implements OnInit {
     });
   }
 
-private loadFeaturedProducts(): void {
+  private loadFeaturedProducts(): void {
     this.marketService.getFeaturedProducts().subscribe({
       next: (products: ProductResponse[]) => {
         this.productsSubject.next({
@@ -108,5 +109,12 @@ private loadFeaturedProducts(): void {
     });
   }
 
+  performSearch(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/search'], { 
+        queryParams: { q: this.searchQuery.trim() } 
+      });
+    }
+  }
 
 }

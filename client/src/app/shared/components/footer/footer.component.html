@@ -1,37 +1,110 @@
-<footer class="marketplace-footer">
-  <div class="footer-content">
-    <div class="footer-column">
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Products</a></li>
-        <li><a href="#">Categories</a></li>
-      </ul>
-    </div>
-    <div class="footer-column">
-      <h4>Customer Service</h4>
-      <ul>
-        <li><a href="#">Contact Us</a></li>
-        <li><a href="#">Shipping</a></li>
-        <li><a href="#">Returns</a></li>
-      </ul>
-    </div>
-    <div class="footer-column">
-      <h4>Connect With Us</h4>
-      <div class="social-icons">
-        <a href="#" class="social-icon">
-          <mat-icon>facebook</mat-icon>
-        </a>
-        <a href="#" class="social-icon">
-          <mat-icon>twitter</mat-icon>
-        </a>
-        <a href="#" class="social-icon">
-          <mat-icon>instagram</mat-icon>
-        </a>
+<!-- Modern footer inspired by React design -->
+<footer class="bg-gray-900 text-gray-300">
+  <div class="container mx-auto px-4 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- About Section -->
+      <div>
+        <div class="flex items-center mb-4">
+          <mat-icon class="w-8 h-8 text-blue-500 mr-2" style="font-size: 2rem; height: 2rem; width: 2rem;">store</mat-icon>
+          <span class="text-xl font-bold text-white">JefJel</span>
+        </div>
+        <p class="text-sm mb-4">
+          Une plateforme e-commerce multilocataire où les vendeurs peuvent présenter leurs produits
+          et les clients peuvent découvrir des articles uniques de diverses boutiques en un seul endroit.
+        </p>
+        <div class="flex space-x-4">
+          <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Facebook">
+            <mat-icon class="w-5 h-5">facebook</mat-icon>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
+            <mat-icon class="w-5 h-5">twitter</mat-icon>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Instagram">
+            <mat-icon class="w-5 h-5">camera_alt</mat-icon>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube">
+            <mat-icon class="w-5 h-5">videocam</mat-icon>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Liens Rapides</h3>
+        <ul class="space-y-2">
+          <li>
+            <a routerLink="/" class="text-gray-400 hover:text-white transition-colors">Accueil</a>
+          </li>
+          <li>
+            <a routerLink="/marketplace" class="text-gray-400 hover:text-white transition-colors">Marketplace</a>
+          </li>
+          <li>
+            <a routerLink="/products" class="text-gray-400 hover:text-white transition-colors">Produits</a>
+          </li>
+          <li>
+            <a routerLink="/cart" class="text-gray-400 hover:text-white transition-colors">Panier</a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Customer Service -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Service Client</h3>
+        <ul class="space-y-2">
+          <li>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">Nous Contacter</a>
+          </li>
+          <li>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">FAQ</a>
+          </li>
+          <li>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">Politique de Livraison</a>
+          </li>
+          <li>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">Retours & Remboursements</a>
+          </li>
+          <li>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">Politique de Confidentialité</a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Contact -->
+      <div>
+        <h3 class="text-lg font-semibold text-white mb-4">Nous Contacter</h3>
+        <ul class="space-y-3">
+          <li class="flex items-start">
+            <mat-icon class="w-5 h-5 text-blue-500 mr-2 mt-0.5">place</mat-icon>
+            <span>123 Rue du Commerce, Dakar, Sénégal</span>
+          </li>
+          <li class="flex items-center">
+            <mat-icon class="w-5 h-5 text-blue-500 mr-2">phone</mat-icon>
+            <span>+221 33 123 45 67</span>
+          </li>
+          <li class="flex items-center">
+            <mat-icon class="w-5 h-5 text-blue-500 mr-2">email</mat-icon>
+            <span>support&#64;jefjel.sn</span>
+          </li>
+        </ul>
       </div>
     </div>
-  </div>
-  <div class="copyright">
-    © 2024 JEFJEL. All Rights Reserved.
+    
+    <!-- Bottom section -->
+    <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+      <p class="text-sm">© 2025 JefJel. Tous droits réservés.</p>
+      <div class="mt-4 md:mt-0">
+        <ul class="flex space-x-4">
+          <li>
+            <a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Conditions d'Utilisation</a>
+          </li>
+          <li>
+            <a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Politique de Confidentialité</a>
+          </li>
+          <li>
+            <a href="#" class="text-sm text-gray-400 hover:text-white transition-colors">Cookies</a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </footer>

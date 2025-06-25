@@ -24,7 +24,7 @@ export default class extends BaseSchema {
         .notNullable()
 
       table.integer('quantity').unsigned().defaultTo(0)
-      table.integer('reserverdQuantity').unsigned().defaultTo(0)
+      table.integer('reservedQuantity').unsigned().defaultTo(0)
       table.integer('reorder_point').unsigned().defaultTo(0)
       table.integer('reorder_quantity').unsigned().defaultTo(0)
       table.integer('low_stock_threshold').unsigned().defaultTo(0)

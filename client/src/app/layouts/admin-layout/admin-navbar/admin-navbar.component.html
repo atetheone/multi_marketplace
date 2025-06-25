@@ -1,82 +1,79 @@
-<mat-toolbar color="primary" class="flex justify-between items-center">
-  <div class="flex items-center">
-    <button mat-icon-button (click)="toggleSidenav.emit()">
-      <mat-icon>menu</mat-icon>
-    </button>
-    
-    <span class="ml-3 text-lg">{{ currentPageTitle }}</span>
-  </div>
+<!-- Modern responsive top bar inspired by React design -->
+<div class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm border-b border-gray-200">
+  <!-- Mobile menu button -->
+  <button
+    mat-icon-button
+    (click)="toggleSidenav.emit()"
+    class="px-4 border-r border-gray-200 text-gray-500 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 md:hidden transition-colors"
+    aria-label="Toggle sidebar menu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
   
-  <div class="flex items-center space-x-4">
-    <!-- Notifications -->
-    <app-notifications-menu></app-notifications-menu>
-
-    <!-- <button mat-icon-button [matMenuTriggerFor]="notificationsMenu">
-      <mat-icon [matBadge]="unreadCount" 
-                [matBadgeHidden]="unreadCount === 0" 
-                matBadgeColor="warn">
-        notifications
-      </mat-icon>
-    </button>
-    <mat-menu #notificationsMenu="matMenu" class="notification-menu">
-      <div class="p-2 flex justify-between items-center border-b">
-        <span class="font-semibold">Notifications</span>
-        @if (unreadCount > 0) {
-          <button mat-button color="primary" (click)="markAllAsRead()">
-            Mark all as read
+  <!-- Main content area -->
+  <div class="flex-1 px-4 flex justify-between items-center">
+    <!-- Left section - Page title -->
+    <div class="flex-1 flex items-center">
+      <h1 class="text-lg font-medium text-gray-900">{{ currentPageTitle }}</h1>
+    </div>
+    
+    <!-- Right section - Actions and user profile -->
+    <div class="ml-4 flex items-center space-x-3">
+      <!-- Notifications component -->
+      <app-notifications-menu class="flex items-center"></app-notifications-menu>
+      
+      <!-- User profile menu -->
+      <div class="relative flex items-center border-l border-gray-200 pl-3">
+        <button
+          mat-button
+          [matMenuTriggerFor]="userMenu"
+          class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md px-2 py-1 transition-colors"
+          aria-label="User menu"
+        >
+          <!-- User avatar placeholder -->
+          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
+            <mat-icon class="text-white text-sm">person</mat-icon>
+          </div>
+          
+          <!-- User name (hidden on mobile) -->
+          <div class="hidden sm:block text-left">
+            <p class="text-sm font-medium text-gray-700 leading-none">Admin User</p>
+            <p class="text-xs text-gray-500 mt-0.5">Administrateur</p>
+          </div>
+          
+          <mat-icon class="text-gray-400 text-sm">keyboard_arrow_down</mat-icon>
+        </button>
+        
+        <!-- User dropdown menu -->
+        <mat-menu #userMenu="matMenu" class="mt-2 w-56">
+          <div class="p-3 border-b border-gray-100">
+            <p class="text-sm font-medium text-gray-900">Admin User</p>
+            <p class="text-xs text-gray-500">admin&#64;example.com</p>
+          </div>
+          
+          <button mat-menu-item routerLink="/dashboard/profile" class="py-2">
+            <mat-icon class="mr-3 text-gray-400">person</mat-icon>
+            <span i18n="@@admin-navbar.profile">Profil</span>
           </button>
-        }
+          
+          <button mat-menu-item routerLink="/dashboard" class="py-2">
+            <mat-icon class="mr-3 text-gray-400">dashboard</mat-icon>
+            <span i18n="@@admin-navbar.dashboard">Tableau de bord</span>
+          </button>
+          
+          <button mat-menu-item routerLink="/dashboard/settings" class="py-2">
+            <mat-icon class="mr-3 text-gray-400">settings</mat-icon>
+            <span i18n="@@admin-navbar.settings">Paramètres</span>
+          </button>
+          
+          <mat-divider class="my-1"></mat-divider>
+          
+          <button mat-menu-item (click)="logout()" class="py-2 text-red-600 hover:bg-red-50">
+            <mat-icon class="mr-3 text-red-500">logout</mat-icon>
+            <span i18n="@@admin-navbar.logout">Déconnexion</span>
+          </button>
+        </mat-menu>
       </div>
-
-      @if (notifications.length === 0) {
-        <div class="p-4 text-center text-gray-500">
-          <mat-icon class="mb-2">notifications_off</mat-icon>
-          <p>No notifications</p>
-        </div>
-      } @else {
-        <div class="max-h-96 overflow-y-auto">
-          @for (notification of notifications; track notification.id) {
-            <button mat-menu-item 
-                    [class.bg-gray-50]="!notification.isRead"
-                    (click)="markAsRead(notification.id)">
-              <mat-icon [color]="notification.isRead ? '' : 'primary'">
-                {{ getNotificationIcon(notification.type) }}
-              </mat-icon>
-              <div class="flex flex-col ml-2">
-                <span class="text-sm font-medium">{{ notification.title }}</span>
-                <small class="text-gray-500 text-xs">{{ notification.message }}</small>
-                <small class="text-gray-400 text-xs mt-1">
-                  {{ notification.createdAt | date:'short' }}
-                </small>
-              </div>
-            </button>
-          }
-        </div>
-      }
-    </mat-menu>
-     -->
-    <!-- User Profile -->
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-      <mat-icon>account_circle</mat-icon>
-    </button>
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item routerLink="/dashboard/profile">
-        <mat-icon>person</mat-icon>
-        <span i18n="@@admin-navbar.profile">Profil</span>
-      </button>
-      <button mat-menu-item routerLink="/dashboard">
-        <mat-icon>dashboard</mat-icon>
-        <span i18n="@@admin-navbar.dashboard">Tableau de bord</span>
-      </button>
-      <button mat-menu-item routerLink="/dashboard/settings">
-        <mat-icon>settings</mat-icon>
-        <span i18n="@@admin-navbar.settings">Paramètres</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>exit_to_app</mat-icon>
-        <span i18n="@@admin-navbar.logout">Déconnexion</span>
-      </button>
-    </mat-menu>
+    </div>
   </div>
-</mat-toolbar>
+</div>

@@ -13,7 +13,7 @@ export default class Inventory extends BaseModel {
   @column()
   declare quantity: number
 
-  @column()
+  @column({ columnName: 'reserved_quantity' })
   declare reservedQuantity: number
 
   @column()

@@ -1,0 +1,116 @@
+.cart-item
+  @apply flex items-start gap-4 p-6 bg-white border-b border-gray-100 last:border-b-0
+
+  &-image
+    @apply w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden
+    
+    img
+      @apply w-full h-full object-cover
+
+  &-details
+    @apply flex-1 min-w-0
+    
+    &-header
+      @apply flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3
+      
+      &-info
+        @apply flex-1 min-w-0
+        
+        h3
+          @apply text-base sm:text-lg font-medium text-gray-900 mb-1 truncate
+          
+        .vendor
+          @apply flex items-center text-sm text-gray-500 mb-2
+          
+          mat-icon
+            @apply w-4 h-4 mr-1 text-gray-400
+            
+        .stock-status
+          @apply flex items-center text-sm text-green-600
+          
+          mat-icon
+            @apply w-4 h-4 mr-1
+            
+      &-price
+        @apply hidden sm:block text-right
+        
+        .amount
+          @apply text-lg font-bold text-gray-900
+          
+        .unit-price
+          @apply text-sm text-gray-500 mt-1
+          
+    &-mobile-price
+      @apply sm:hidden mb-3
+      
+      .amount
+        @apply text-lg font-bold text-blue-600
+
+  &-actions
+    @apply flex items-center justify-between pt-4 border-t border-gray-100 mt-4
+    
+    &-quantity
+      @apply flex items-center gap-3
+      
+      .label
+        @apply text-sm text-gray-600 font-medium
+        
+      .controls
+        @apply flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white
+        
+        button
+          @apply w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border-none bg-transparent
+          
+          mat-icon
+            font-size: 1rem
+            height: 1rem
+            width: 1rem
+            
+        .display
+          @apply px-3 py-1 bg-gray-50 border-l border-r border-gray-200 min-w-[2.5rem] text-center text-sm font-medium
+          
+      .stock-info
+        @apply text-xs text-gray-500
+        
+    &-total
+      @apply flex items-center gap-4
+      
+      .subtotal
+        @apply text-right
+        
+        .amount
+          @apply text-lg font-bold text-gray-900
+          
+        .label
+          @apply text-xs text-gray-500 mt-1
+          
+      .buttons
+        @apply flex items-center gap-2
+        
+        button
+          @apply w-9 h-9 flex items-center justify-center rounded-lg transition-colors border-none bg-transparent
+          
+          &.save-btn
+            @apply text-gray-400 hover:text-blue-600 hover:bg-blue-50
+            
+          &.remove-btn
+            @apply text-gray-400 hover:text-red-600 hover:bg-red-50
+            
+          mat-icon
+            font-size: 1.25rem
+            height: 1.25rem
+            width: 1.25rem
+
+// Responsive adjustments
+@media (max-width: 640px)
+  .cart-item
+    @apply flex-col gap-3 p-4
+    
+    &-actions
+      @apply flex-col items-start gap-4 pt-3
+      
+      &-total
+        @apply w-full justify-between
+        
+        .subtotal
+          @apply text-left

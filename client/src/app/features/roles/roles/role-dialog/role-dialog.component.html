@@ -16,7 +16,7 @@
       }
 
       <!-- Role Name -->
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="fill">
         <mat-label>Role Name</mat-label>
         <input matInput formControlName="name" placeholder="Enter role name">
         @if (form.get('name')?.hasError('required') && form.get('name')?.touched) {

@@ -44,7 +44,7 @@ interface DialogState extends DataState<ResourceResponse[]> {
                 <mat-error class="mb-4">{{ state.error }}</mat-error>
               } @case ('success') {
                 <!-- Resource Selection -->
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="fill">
                   <mat-label>Resource</mat-label>
                   <mat-select formControlName="resourceId">
                     @for (resource of state.data; track resource.id) {
@@ -60,7 +60,7 @@ interface DialogState extends DataState<ResourceResponse[]> {
                 </mat-form-field>
 
                 <!-- Action Selection -->
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="fill">
                   <mat-label>Action</mat-label>
                   <mat-select formControlName="action">
                     @for (action of availableActions; track action) {
@@ -74,7 +74,7 @@ interface DialogState extends DataState<ResourceResponse[]> {
                 </mat-form-field>
 
                 <!-- Scope Selection -->
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="fill">
                   <mat-label>Scope</mat-label>
                   <mat-select formControlName="scope">
                     <mat-option value="all">All</mat-option>

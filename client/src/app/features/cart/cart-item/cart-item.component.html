@@ -1,60 +1,126 @@
-<mat-card class="p-4 mb-4">
-  <div class="flex items-center gap-6">
-    <!-- Product Image -->
-    <img [src]="item.product.images?.[0]?.url || 'assets/placeholder.jpg'" 
-         [alt]="item.product.name"
-         class="w-20 h-20 object-cover rounded">
-    
-    <div class="flex flex-start flex-col space-y-2 flex-grow">
-      <!-- Product Name -->
-      <h3 class="text-lg font-semibold flex-1">{{ item.product.name }}</h3>
-
-      <!-- Price -->
-      <p class="font-medium w-24 text-center">
-        {{ item.product.price }} FCFA
-      </p>
-
-      <!-- Quantity Controls -->
-      <div class="flex items-center gap-1 w-32 justify-center">
-        <button mat-icon-button 
-                color="primary"
-                [disabled]="item.quantity <= 1"
-                (click)="updateQuantity(item.quantity - 1)">
-          <mat-icon>remove</mat-icon>
-        </button>
-        <input 
-              type="number" 
-              matInput
-              [min]="1"
-              [max]="item.product.inventory.quantity"
-              [(ngModel)]="item.quantity"
-              value="1"
-              (change)="updateQuantity(item.quantity)"
-              class="h-7 text-center font-medium"
-        >
-
-        <!-- <span class="w-8 text-center font-medium">{{item.quantity}}</span> -->
-        
-        <button mat-icon-button 
-                color="primary"
-                [disabled]="item.quantity >= item.product.inventory.quantity"
-                (click)="updateQuantity(item.quantity + 1)">
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
-
-    </div>
-    <!-- Subtotal -->
-    <p class="font-medium w-32 text-right">
-      {{ getSubTotal() }} FCFA
-    </p>
-
-    <!-- Delete Button -->
-    <button mat-icon-button 
-            color="warn" 
-            (click)="remove.emit()"
-            matTooltip="Remove item">
-      <mat-icon>delete</mat-icon>
-    </button> 
+<div class="flex items-center gap-4 sm:gap-6 py-4">
+  <!-- Product Image -->
+  <div class="flex-shrink-0">
+    <img 
+      [src]="item.product.images?.[0]?.url || 'assets/placeholder.jpg'" 
+      [alt]="item.product.name"
+      class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border border-gray-200 hover:shadow-md transition-shadow"
+    />
   </div>
-</mat-card>
+  
+  <!-- Product Details -->
+  <div class="flex-1 min-w-0">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+      <!-- Product Info -->
+      <div class="flex-1 min-w-0">
+        <h3 class="text-base sm:text-lg font-semibold text-gray-900 truncate mb-1">
+          {{ item.product.name }}
+        </h3>
+        
+        <div class="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-gray-600">
+          <p class="flex items-center">
+            <mat-icon class="w-4 h-4 mr-1 text-gray-400" style="font-size: 1rem; height: 1rem; width: 1rem;">store</mat-icon>
+            Vendeur Vérifié
+          </p>
+          
+          <span class="hidden sm:inline text-gray-300">•</span>
+          
+          <p class="flex items-center">
+            <mat-icon class="w-4 h-4 mr-1 text-green-500" style="font-size: 1rem; height: 1rem; width: 1rem;">verified</mat-icon>
+            En stock
+          </p>
+        </div>
+        
+        <!-- Mobile Price Display -->
+        <div class="sm:hidden mt-2">
+          <p class="text-lg font-bold text-blue-600">
+            {{ item.product.price | currency:'XOF':'symbol':'1.0-0' }}
+          </p>
+        </div>
+      </div>
+      
+      <!-- Desktop Price Display -->
+      <div class="hidden sm:block text-right">
+        <p class="text-lg font-bold text-gray-900">
+          {{ item.product.price | currency:'XOF':'symbol':'1.0-0' }}
+        </p>
+        <p class="text-sm text-gray-500">par article</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Actions Row -->
+<div class="flex items-center justify-between pt-4 border-t border-gray-100">
+  <!-- Quantity Controls -->
+  <div class="flex items-center">
+    <span class="text-sm text-gray-600 mr-3">Quantité:</span>
+    <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+      <button 
+        type="button"
+        mat-icon-button 
+        [disabled]="item.quantity <= 1"
+        (click)="updateQuantity(item.quantity - 1)"
+        class="w-8 h-8 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        <mat-icon class="w-4 h-4" style="font-size: 1rem; height: 1rem; width: 1rem;">remove</mat-icon>
+      </button>
+      
+      <div class="px-3 py-1 bg-gray-50 border-l border-r border-gray-300">
+        <span class="text-sm font-medium min-w-[2rem] text-center">{{item.quantity}}</span>
+      </div>
+      
+      <button 
+        type="button"
+        mat-icon-button 
+        [disabled]="item.quantity >= (item.product.inventory.quantity || 999)"
+        (click)="updateQuantity(item.quantity + 1)"
+        class="w-8 h-8 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        <mat-icon class="w-4 h-4" style="font-size: 1rem; height: 1rem; width: 1rem;">add</mat-icon>
+      </button>
+    </div>
+    
+    <!-- Stock Info -->
+    <span class="ml-3 text-xs text-gray-500">
+      @if (item.product.inventory.quantity) {
+        ({{item.product.inventory.quantity}} disponibles)
+      }
+    </span>
+  </div>
+  
+  <!-- Price and Actions -->
+  <div class="flex items-center gap-4">
+    <!-- Subtotal -->
+    <div class="text-right">
+      <p class="text-lg font-bold text-gray-900">
+        {{ getSubTotal() | currency:'XOF':'symbol':'1.0-0' }}
+      </p>
+      <p class="text-xs text-gray-500">sous-total</p>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="flex items-center gap-2">
+      <!-- Save for Later (Optional) -->
+      <button 
+        type="button"
+        mat-icon-button 
+        matTooltip="Sauvegarder pour plus tard"
+        class="text-gray-400 hover:text-blue-600 transition-colors"
+      >
+        <mat-icon class="w-5 h-5" style="font-size: 1.25rem; height: 1.25rem; width: 1.25rem;">favorite_border</mat-icon>
+      </button>
+      
+      <!-- Remove Button -->
+      <button 
+        type="button"
+        mat-icon-button 
+        (click)="remove.emit()"
+        matTooltip="Supprimer l'article"
+        class="text-gray-400 hover:text-red-600 transition-colors"
+      >
+        <mat-icon class="w-5 h-5" style="font-size: 1.25rem; height: 1.25rem; width: 1.25rem;">delete_outline</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

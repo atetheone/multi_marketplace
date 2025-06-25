@@ -1,8 +1,23 @@
-mat-toolbar 
-  position: sticky
-  top: 0
-  z-index: 1000
-  display: flex
-  align-items: center
-  padding: 0 16px
-    
+// Modern navbar styles inspired by React design
+.navbar-container
+  border-bottom: 1px solid theme('colors.gray.200')
+  background: white
+
+// Custom menu styles  
+::ng-deep .mat-mdc-menu-panel
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)
+  border: 1px solid theme('colors.gray.100')
+  border-radius: 8px
+
+// Remove default mat-button styles for cleaner look
+::ng-deep .mat-mdc-button.mat-mdc-button-base
+  border-radius: 6px
+  
+// Custom focus styles
+::ng-deep .mat-mdc-button:focus
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5)
+
+// Responsive adjustments
+@media (max-width: 640px)
+  .user-info
+    display: none

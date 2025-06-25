@@ -16,6 +16,7 @@ export class NavbarComponent implements OnInit {
   isUserMenuOpen = false;
   isCategoryMenuOpen = false;
   isAuthenticated = false;
+  isMobileMenuOpen = false;
 
   mainNavItems = [
     { path: '/products', label: 'Products' },
@@ -56,6 +57,14 @@ export class NavbarComponent implements OnInit {
 
   navigateToCart(): void {
     this.router.navigate(['/cart']);
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
   }
 
 }

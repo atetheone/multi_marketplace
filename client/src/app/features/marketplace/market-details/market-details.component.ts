@@ -80,11 +80,9 @@ export class MarketDetailsComponent implements OnInit {
         console.error('Add to cart error:', error);
       }
     })
-  
-    
   }
 
-  private loadMarketProducts(marketId: number, page: number = 1) {
+  loadMarketProducts(marketId: number, page: number = 1) {
     this.marketService.getMarketProducts(marketId, page).subscribe({
       next: (products) => {
         this.productsSubject.next({

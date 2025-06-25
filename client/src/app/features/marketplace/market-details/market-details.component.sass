@@ -1,12 +1,93 @@
+// Modern Market Details Styles
+.market-header
+  position: relative
+  overflow: hidden
+  
+  .market-cover
+    transition: transform 0.3s ease
+    
+  &:hover .market-cover
+    transform: scale(1.02)
+
+.market-logo
+  transition: transform 0.3s ease
+  
+  &:hover
+    transform: scale(1.05)
+
+.verified-badge
+  animation: pulse 2s infinite
+  
+@keyframes pulse
+  0%, 100%
+    transform: scale(1)
+  50%
+    transform: scale(1.1)
+
+.stat-card
+  transition: all 0.3s ease
+  
+  &:hover
+    transform: translateY(-2px)
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1)
+    
+  .stat-icon
+    transition: transform 0.3s ease
+    
+  &:hover .stat-icon
+    transform: scale(1.1)
+
+// Product Card Enhancements
 .product-card
-  transition: transform 0.2s ease-in-out
+  transition: all 0.3s ease
+  
   &:hover
     transform: translateY(-4px)
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15)
     
   img
+    transition: transform 0.3s ease
     height: 200px
     object-fit: cover
+    
+  &:hover img
+    transform: scale(1.05)
 
+// Backdrop blur utilities
+.backdrop-blur-sm
+  backdrop-filter: blur(4px)
+  -webkit-backdrop-filter: blur(4px)
+
+// Status indicator styles
+.status-indicator
+  animation: pulse 2s infinite
+  
+  &.active
+    background-color: #10b981
+    
+  &.inactive
+    background-color: #ef4444
+
+// Empty state styling
+.empty-state
+  .empty-icon
+    transition: transform 0.3s ease
+    
+  &:hover .empty-icon
+    transform: scale(1.1)
+
+// Loading state improvements
+.loading-container
+  .loading-text
+    animation: fadeInOut 2s infinite
+    
+@keyframes fadeInOut
+  0%, 100%
+    opacity: 0.5
+  50%
+    opacity: 1
+
+// Original card styles (preserved for compatibility)
 .mat-mdc-card-content
   padding: 16px
 

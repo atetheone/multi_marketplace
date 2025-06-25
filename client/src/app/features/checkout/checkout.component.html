@@ -1,145 +1,321 @@
-<div class="max-w-4xl mx-auto p-4">
-  <h1 class="text-2xl font-bold mb-6">Checkout</h1>
-
+<div class="checkout-container">
   @if (cart$ | async; as cart) {
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Order Summary -->
-      <div class="md:col-span-1">
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>Order Summary</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="p-4">
-            @for (item of cart.items; track item.id) {
-              <div class="flex justify-between mb-2">
-                <div>
-                  <p class="font-medium">{{item.product.name}}</p>
-                  <p class="text-sm text-gray-600">Quantity: {{item.quantity}}</p>
-                </div>
-                <p class="font-medium">{{item.product.price * item.quantity | number:'1.2-2'}} FCFA</p>
-              </div>
-            }
-            <mat-divider class="my-4"></mat-divider>
-            <div class="flex justify-between font-bold mb-4">
-              <span>Subtotal</span>
-              <span>{{getSubtotal(cart)}} FCFA</span>
-            </div>
-            <!-- Add Fees Section -->
-            @if (checkoutForm.get('shippingAddress.zone')?.value.id) {
-              <div class="flex justify-between text-gray-700 mb-4">
-                <span>Delivery Fee ({{checkoutForm.get('shippingAddress.zone')?.value.name}})</span>
-                <span>{{ checkoutForm.get('shippingAddress.zone')?.value.fee }} FCFA</span>
-              </div>
-            }
-            <mat-divider class="my-4"></mat-divider>
-            <div class="flex justify-between font-bold">
-              <span>Total</span>
-              <span>{{getTotal(cart)}} FCFA</span>
-            </div>
-          </mat-card-content>
-        </mat-card>
-      </div>
+    <!-- Header Section -->
+    <div class="checkout-header">
+      <button 
+        type="button"
+        mat-button
+        routerLink="/cart" 
+        class="back-button"
+      >
+        <mat-icon>arrow_back</mat-icon>
+        Retour au Panier
+      </button>
 
-      <!-- Checkout Form -->
-      <div class="md:col-span-2">
+      <h1>Finaliser la Commande</h1>
+      <p class="subtitle">Complétez vos informations pour procéder au paiement</p>
+    </div>
+
+    <div class="checkout-grid">
+      <!-- Left Column - Forms -->
+      <div class="checkout-forms">
         <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()">
-          <!-- Shipping Address -->
-          <mat-card class="mb-4">
-            <mat-card-header>
-              <mat-card-title>Shipping Address</mat-card-title>
-            </mat-card-header>
-            <mat-card-content class="p-4" formGroupName="shippingAddress">
-              <mat-form-field class="w-full">
-                <mat-label>Address Line 1</mat-label>
-                <input matInput formControlName="addressLine1" required>
-              </mat-form-field>
-      
-              <mat-form-field class="w-full">
-                <mat-label>Address Line 2</mat-label>
-                <input matInput formControlName="addressLine2">
-              </mat-form-field>
-              <div class="grid grid-cols-2 gap-4">
-                <mat-form-field>
-                  <mat-label>City</mat-label>
-                  <input matInput formControlName="city">
+          <!-- Shipping Information -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <h3>
+                <mat-icon>location_on</mat-icon>
+                Informations de Livraison
+              </h3>
+            </div>
+            <div class="form-section-content">
+              
+              <!-- Address Selection Mode Choice -->
+              <div class="address-mode-selection" *ngIf="savedAddresses.length > 0">
+                <mat-radio-group [(ngModel)]="selectedAddressMode" (change)="onAddressModeChange()">
+                  <mat-radio-button value="existing" class="address-option">
+                    Utiliser une adresse existante
+                  </mat-radio-button>
+                  <mat-radio-button value="new" class="address-option">
+                    Ajouter une nouvelle adresse
+                  </mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <!-- Existing Address Selection -->
+              <div *ngIf="savedAddresses.length > 0 && selectedAddressMode === 'existing'" class="existing-addresses">
+                <mat-radio-group [(ngModel)]="selectedAddressId" (change)="onAddressSelect($event)">
+                  <div *ngFor="let address of savedAddresses" class="address-card">
+                    <mat-radio-button [value]="address.id">
+                      <div class="address-details">
+                        <div class="address-name">{{ address.addressLine1 }}</div>
+                        <div class="address-full">
+                          {{ address.addressLine2 }}, {{ address.city }}
+                          <span *ngIf="address.postalCode">, {{ address.postalCode }}</span>
+                        </div>
+                        <div class="address-phone">{{ address.phone }}</div>
+                        <span *ngIf="address.isDefault" class="default-badge">Par défaut</span>
+                      </div>
+                    </mat-radio-button>
+                  </div>
+                </mat-radio-group>
+              </div>
+
+              <!-- New Address Form -->
+              <div *ngIf="selectedAddressMode === 'new' || savedAddresses.length === 0" 
+                   formGroupName="shippingAddress">
+                <div class="address-form">
+                <mat-form-field appearance="fill">
+                  <mat-label>Nom Complet *</mat-label>
+                  <input matInput formControlName="addressLine1" required>
+                  <mat-error>Ce champ est requis</mat-error>
                 </mat-form-field>
 
-                <mat-form-field>
-                  <mat-label>State</mat-label>
+                <mat-form-field appearance="fill">
+                  <mat-label>Téléphone *</mat-label>
+                  <input matInput formControlName="phone" type="tel" required>
+                  <mat-error>Ce champ est requis</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="full-width">
+                  <mat-label>Adresse Complète *</mat-label>
+                  <input matInput formControlName="addressLine2" required>
+                  <mat-error>Ce champ est requis</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                  <mat-label>Ville *</mat-label>
+                  <input matInput formControlName="city" required>
+                  <mat-error>Ce champ est requis</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                  <mat-label>Région</mat-label>
                   <input matInput formControlName="state">
                 </mat-form-field>
 
-                <mat-form-field class="w-full">
-                  <mat-label>Country</mat-label>
-                  <input matInput formControlName="country" required>
+                <mat-form-field appearance="fill">
+                  <mat-label>Pays *</mat-label>
+                  <input matInput formControlName="country" value="Sénégal" required>
+                  <mat-error>Ce champ est requis</mat-error>
                 </mat-form-field>
-              </div>
 
-              <div class="grid grid-cols-2 gap-4">
-                <mat-form-field>
-                  <mat-label>Postal Code</mat-label>
+                <mat-form-field appearance="fill">
+                  <mat-label>Code Postal</mat-label>
                   <input matInput formControlName="postalCode">
                 </mat-form-field>
-      
-                <mat-form-field>
-                  <mat-label>Phone</mat-label>
-                  <input matInput formControlName="phone">
-                </mat-form-field>
 
-                <mat-form-field class="w-full">
-                  <mat-label>Delivery Zone</mat-label>
-                  <mat-select formControlName="zone" required>
-                    @for (zone of zones; track zone.id) {
-                      <mat-option [value]="zone">
-                        {{ zone.name }} - {{ zone.fee }} F CFA
-                      </mat-option>
-                    }
-                  </mat-select>
-                  @if (checkoutForm.get('shippingAddress.zone')?.hasError('required') && 
-                       checkoutForm.get('shippingAddress.zone')?.touched) {
-                    <mat-error>Delivery zone is required</mat-error>
-                  }
-                </mat-form-field>
-                
+                <!-- Make Default Address Checkbox -->
+                <div class="default-address-option" *ngIf="selectedAddressMode === 'new' || savedAddresses.length === 0">
+                  <mat-checkbox [(ngModel)]="makeDefaultAddress">
+                    Définir comme adresse par défaut
+                  </mat-checkbox>
+                </div>
               </div>
-            </mat-card-content>
-          </mat-card>
-
-          <!-- Payment Method -->
-          <div class="mt-8">
-            <h3 class="text-xl font-semibold mb-4">Payment Method</h3>
-            <mat-radio-group formControlName="paymentMethod" class="flex flex-col gap-3">
-              <mat-radio-button value="cash">Cash on Delivery</mat-radio-button>
-              <mat-radio-button value="card">Credit Card</mat-radio-button>
-              <mat-radio-button value="mobile">Mobile Money</mat-radio-button>
-            </mat-radio-group>
+              </div>
+            </div>
           </div>
 
-          <!-- Submit Button -->
-          <button mat-raised-button 
-                  color="primary" 
-                  class="w-full" 
-                  type="submit"
-                  [disabled]="checkoutForm.invalid || isProcessing">
-            @if (isProcessing) {
-              <mat-spinner diameter="20" class="mr-2"></mat-spinner>
-              Processing...
-            } @else {
-              Place Order
-            }
-          </button>
+          <!-- Delivery Zone - Only for new addresses -->
+          <div class="form-section" *ngIf="selectedAddressMode === 'new' || savedAddresses.length === 0">
+            <div class="form-section-header">
+              <h3>
+                <mat-icon>local_shipping</mat-icon>
+                Zone de Livraison
+              </h3>
+            </div>
+            <div class="form-section-content" formGroupName="shippingAddress">
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label>Sélectionner une zone de livraison *</mat-label>
+                <mat-select formControlName="zone" required>
+                  @for (zone of zones; track zone.id) {
+                    <mat-option [value]="zone">
+                      {{ zone.name }} - {{ zone.fee.toLocaleString() }} FCFA
+                      <span class="text-xs text-gray-500 block">
+                        Délai: 24-48h
+                      </span>
+                    </mat-option>
+                  }
+                </mat-select>
+                <mat-error>Veuillez sélectionner une zone de livraison</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Zone Information for existing addresses -->
+          <div class="form-section" *ngIf="selectedAddressMode === 'existing' && savedAddresses.length > 0 && checkoutForm.get('shippingAddress.zone')?.value">
+            <div class="form-section-header">
+              <h3>
+                <mat-icon>local_shipping</mat-icon>
+                Zone de Livraison
+              </h3>
+            </div>
+            <div class="form-section-content">
+              <div class="zone-display">
+                <div class="zone-info">
+                  <strong>{{ checkoutForm.get('shippingAddress.zone')?.value.name }}</strong>
+                  <span class="zone-fee">{{ checkoutForm.get('shippingAddress.zone')?.value.fee.toLocaleString() }} FCFA</span>
+                  <span class="zone-delivery">Délai: 24-48h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-section">
+            <div class="form-section-header">
+              <h3>
+                <mat-icon>payment</mat-icon>
+                Mode de Paiement
+              </h3>
+            </div>
+            <div class="form-section-content">
+              <div class="payment-options">
+                <div class="payment-option">
+                  <input 
+                    type="radio" 
+                    id="mobile-money" 
+                    name="payment" 
+                    value="mobile"
+                    formControlName="paymentMethod"
+                  >
+                  <div class="option-content">
+                    <div class="option-title">Mobile Money</div>
+                    <div class="option-description">Orange Money, Wave, Free Money</div>
+                  </div>
+                </div>
+
+                <div class="payment-option">
+                  <input 
+                    type="radio" 
+                    id="cash-delivery" 
+                    name="payment" 
+                    value="cash"
+                    formControlName="paymentMethod"
+                  >
+                  <div class="option-content">
+                    <div class="option-title">Paiement à la Livraison</div>
+                    <div class="option-description">Payez en espèces lors de la réception</div>
+                  </div>
+                </div>
+
+                <div class="payment-option">
+                  <input 
+                    type="radio" 
+                    id="card" 
+                    name="payment" 
+                    value="card"
+                    formControlName="paymentMethod"
+                  >
+                  <div class="option-content">
+                    <div class="option-title">Carte Bancaire</div>
+                    <div class="option-description">Visa, Mastercard</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </form>
+      </div>
+
+      <!-- Right Column - Order Summary -->
+      <div class="order-summary">
+        <div class="summary-card">
+          <div class="summary-card-header">
+            <h3>Résumé de la Commande</h3>
+          </div>
+          
+          <div class="summary-card-content">
+            <!-- Order Items -->
+            <div class="order-items">
+              @if (cart && cart.items && cart.items.length > 0) {
+                @for (item of cart.items; track item.id) {
+                  <div class="order-item">
+                    <div class="item-info">
+                      <div class="item-name">{{ item.product.name }}</div>
+                      <div class="item-quantity">Qté: {{ item.quantity }}</div>
+                    </div>
+                    <div class="item-price">
+                      {{ (item.product.price * item.quantity) | currency:'XOF':'symbol':'1.0-0' }}
+                    </div>
+                  </div>
+                }
+              } @else {
+                <div class="no-items">
+                  <p>Aucun article dans le panier</p>
+                </div>
+              }
+            </div>
+            
+            <!-- Pricing Breakdown -->
+            <div class="pricing-breakdown" *ngIf="cart">
+              <div class="pricing-row">
+                <span class="label">Sous-total</span>
+                <span class="value">{{ getSubtotal(cart) | currency:'XOF':'symbol':'1.0-0' }}</span>
+              </div>
+              
+              <div class="pricing-row">
+                <span class="label">Livraison</span>
+                <span class="value">
+                  {{ getDeliveryFee() | currency:'XOF':'symbol':'1.0-0' }}
+                </span>
+              </div>
+              
+              @if (checkoutForm.get('shippingAddress.zone')?.value) {
+                <div class="pricing-row zone-info">
+                  <span class="label">Zone: {{ checkoutForm.get('shippingAddress.zone')?.value.name }}</span>
+                  <span class="value">Délai: 24-48h</span>
+                </div>
+              }
+              
+              <div class="pricing-row total">
+                <span class="label">Total</span>
+                <span class="value">{{ getTotal(cart) | currency:'XOF':'symbol':'1.0-0' }}</span>
+              </div>
+            </div>
+            
+            <!-- Checkout Button -->
+            <button 
+              type="button"
+              class="checkout-button"
+              (click)="placeOrder()"
+              [disabled]="checkoutForm.invalid || isProcessing"
+            >
+              @if (isProcessing) {
+                <mat-spinner diameter="20"></mat-spinner>
+                Traitement...
+              } @else {
+                <mat-icon>shopping_cart_checkout</mat-icon>
+                Confirmer la Commande
+              }
+            </button>
+            
+            <p class="terms-notice">
+              En confirmant votre commande, vous acceptez nos conditions de vente.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   } @else {
-    <div class="text-center py-12">
-      <mat-icon class="text-6xl text-gray-400">shopping_cart</mat-icon>
-      <p class="mt-4 text-gray-600">No items in cart</p>
-      <button mat-raised-button 
-              color="primary" 
-              routerLink="/marketplace" 
-              class="mt-4">
-        Continue Shopping
+    <!-- Empty Cart State -->
+    <div class="empty-cart">
+      <div class="empty-icon">
+        <mat-icon>shopping_cart</mat-icon>
+      </div>
+      
+      <h2>Panier Vide</h2>
+      <p class="description">
+        Votre panier est vide. Ajoutez des produits pour continuer.
+      </p>
+      
+      <button 
+        type="button"
+        routerLink="/marketplace" 
+        class="action-button"
+      >
+        <mat-icon>store</mat-icon>
+        Continuer les Achats
       </button>
     </div>
   }

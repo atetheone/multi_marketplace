@@ -42,8 +42,13 @@ export class CartService {
   private loadCart() {
     if (this.authService.isAuthenticated()) {
       this.getCurrentCart().subscribe({
-        next: (cart) => this.cartSubject.next(cart),
-        error: (error) => this.cartSubject.next(null)
+        next: (cart) => {
+          this.cartSubject.next(cart);
+        },
+        error: (error) => {
+          console.error('Error loading cart:', error);
+          this.cartSubject.next(null);
+        }
       });
     } else {
       const guestCart = this.getGuestCart();

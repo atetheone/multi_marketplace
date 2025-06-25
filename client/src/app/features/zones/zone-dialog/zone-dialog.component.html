@@ -4,7 +4,7 @@
   <mat-dialog-content>
     <div class="grid grid-cols-1 gap-4">
       <!-- Zone Name -->
-      <mat-form-field appearance="outline" class="w-full">
+      <mat-form-field appearance="fill" class="w-full">
         <mat-label>Zone Name</mat-label>
         <input matInput formControlName="name" placeholder="Enter zone name">
         @if (zoneForm.get('name')?.hasError('required')) {
@@ -19,7 +19,7 @@
       </mat-form-field>
       
       <!-- Delivery Fee -->
-      <mat-form-field appearance="outline" class="w-full">
+      <mat-form-field appearance="fill" class="w-full">
         <mat-label>Delivery Fee</mat-label>
         <input matInput type="number" formControlName="fee" placeholder="Enter delivery fee">
         <span matTextPrefix>$</span>

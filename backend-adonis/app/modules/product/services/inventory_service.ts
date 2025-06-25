@@ -193,7 +193,7 @@ export class InventoryService {
     try {
       const inventory = await Inventory.query()
         .where('product_id', productId)
-        // .where('tenant_id', tenantId)
+        .where('tenant_id', tenantId)
         .firstOrFail()
 
       await inventory
@@ -216,7 +216,7 @@ export class InventoryService {
     try {
       const inventory = await Inventory.query()
         .where('product_id', productId)
-        // .where('tenant_id', tenantId)
+        .where('tenant_id', tenantId)
         .firstOrFail()
 
       if (inventory.reservedQuantity < quantity) {

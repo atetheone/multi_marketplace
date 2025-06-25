@@ -1,84 +1,125 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-  <mat-card class="w-full max-w-md bg-white shadow-lg rounded-lg">
-    <div class="p-8">
-      <mat-card-title class="text-center text-2xl font-bold mb-8" i18n="@@register.title">S'inscrire</mat-card-title>
-      <mat-card-content>
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label i18n="@@register.username">Nom d'utilisateur</mat-label>
-            <input matInput formControlName="username" class="w-full">
-            @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
-              <mat-error i18n="@@register.username.error">
-                Le nom d'utilisateur doit contenir au moins 3 caractères
-              </mat-error>
-            }
-          </mat-form-field>
-
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label i18n="@@register.email">Adresse e-mail</mat-label>
-            <input matInput type="email" formControlName="email" class="w-full">
-            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-              <mat-error i18n="@@register.email.error">
-                Veuillez entrer une adresse e-mail valide
-              </mat-error>
-            }
-          </mat-form-field>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Modern auth layout inspired by React design -->
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+  <div class="w-full max-w-lg">
+    <!-- Logo section -->
+    <div class="text-center mb-8">
+      <div class="flex items-center justify-center mb-4">
+        <mat-icon class="w-12 h-12 text-blue-600 mr-3" style="font-size: 3rem; height: 3rem; width: 3rem;">store</mat-icon>
+        <span class="text-3xl font-bold text-gray-900">JefJel</span>
+      </div>
+      <p class="text-gray-600">Rejoignez notre marketplace sénégalaise</p>
+    </div>
+    
+    <!-- Register form card -->
+    <div class="bg-white shadow-xl rounded-lg border border-gray-100">
+      <div class="p-8">
+        <h2 class="text-center text-2xl font-bold text-gray-900 mb-8" i18n="@@register.title">Créer un compte</h2>
+        
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
+          <!-- Username field -->
+          <div>
             <mat-form-field appearance="fill" class="w-full">
-              <mat-label i18n="@@register.firstName">Prénom</mat-label>
-              <input matInput formControlName="firstName">
-              @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
-                <mat-error i18n="@@register.firstName.error">
-                  Le prénom est requis
-                </mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="fill" class="w-full">
-              <mat-label i18n="@@register.lastName">Nom de famille</mat-label>
-              <input matInput formControlName="lastName">
-              @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
-                <mat-error i18n="@@register.lastName.error">
-                  Le nom de famille est requis
+              <mat-label i18n="@@register.username">Nom d'utilisateur</mat-label>
+              <input matInput formControlName="username" class="w-full">
+              @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+                <mat-error i18n="@@register.username.error">
+                  Le nom d'utilisateur doit contenir au moins 3 caractères
                 </mat-error>
               }
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label i18n="@@register.password">Mot de passe</mat-label>
-            <input matInput type="password" formControlName="password">
-            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-              <mat-error i18n="@@register.password.error">
-                Le mot de passe doit contenir au moins 6 caractères
-              </mat-error>
-            }
-          </mat-form-field>
+          <!-- Email field -->
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label i18n="@@register.email">Adresse e-mail</mat-label>
+              <input matInput type="email" formControlName="email" class="w-full">
+              @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+                <mat-error i18n="@@register.email.error">
+                  Veuillez entrer une adresse e-mail valide
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
 
-          <mat-form-field appearance="fill" class="w-full">
-            <mat-label i18n="@@register.confirmPassword">Confirmer le mot de passe</mat-label>
-            <input matInput type="password" formControlName="confirmPassword">
-            @if (registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched) {
-              <mat-error i18n="@@register.confirmPassword.error">
-                Les mots de passe ne correspondent pas
-              </mat-error>
-            }
-          </mat-form-field>
+          <!-- First and Last name fields -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label i18n="@@register.firstName">Prénom</mat-label>
+                <input matInput formControlName="firstName">
+                @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
+                  <mat-error i18n="@@register.firstName.error">
+                    Le prénom est requis
+                  </mat-error>
+                }
+              </mat-form-field>
+            </div>
 
-          <button mat-raised-button color="primary" type="submit" 
-                  [disabled]="registerForm.invalid"
-                  class="w-full py-3 rounded-lg transition-colors"
-                  i18n="@@register.button">
-            S'inscrire
+            <div>
+              <mat-form-field appearance="fill" class="w-full">
+                <mat-label i18n="@@register.lastName">Nom de famille</mat-label>
+                <input matInput formControlName="lastName">
+                @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
+                  <mat-error i18n="@@register.lastName.error">
+                    Le nom de famille est requis
+                  </mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Password field -->
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label i18n="@@register.password">Mot de passe</mat-label>
+              <input matInput type="password" formControlName="password">
+              @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+                <mat-error i18n="@@register.password.error">
+                  Le mot de passe doit contenir au moins 6 caractères
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Confirm password field -->
+          <div>
+            <mat-form-field appearance="fill" class="w-full">
+              <mat-label i18n="@@register.confirmPassword">Confirmer le mot de passe</mat-label>
+              <input matInput type="password" formControlName="confirmPassword">
+              @if (registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched) {
+                <mat-error i18n="@@register.confirmPassword.error">
+                  Les mots de passe ne correspondent pas
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Submit button -->
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit" 
+            [disabled]="registerForm.invalid"
+            class="w-full h-12 text-base font-medium rounded-lg transition-all duration-200 hover:shadow-lg disabled:opacity-50 mt-6"
+            i18n="@@register.button"
+          >
+            Créer mon compte
           </button>
         </form>
-      </mat-card-content>
-      <mat-card-actions class="flex justify-center mt-4">
-        <a mat-button routerLink="/login" class="text-primary-600 hover:text-primary-700" i18n="@@register.alreadyHaveAccount">
-          Vous avez déjà un compte ? Se connecter
-        </a>
-      </mat-card-actions>
+
+        <!-- Login link -->
+        <div class="mt-6 text-center">
+          <span class="text-gray-600">Vous avez déjà un compte ? </span>
+          <a 
+            routerLink="/login" 
+            class="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+            i18n="@@register.alreadyHaveAccount"
+          >
+            Se connecter
+          </a>
+        </div>
+      </div>
     </div>
-  </mat-card>
+  </div>
 </div>
