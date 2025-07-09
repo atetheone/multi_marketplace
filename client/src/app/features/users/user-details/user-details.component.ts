@@ -12,6 +12,7 @@ import { RoleResponse } from '#types/role';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { AuthService } from '#services/auth.service';
 
 @Component({
   selector: 'app-user-details',
@@ -42,7 +43,8 @@ export class UserDetailsComponent implements OnInit {
     private roleService: RoleService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -187,5 +189,14 @@ export class UserDetailsComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/dashboard/users']);
+  }
+
+  // Permission checking methods
+  canUpdateUsers(): boolean {
+    return this.authService.hasPermissions(['update:users']);
+  }
+
+  canAssignRoles(): boolean {
+    return this.authService.hasPermissions(['assign:roles']);
   }
 }

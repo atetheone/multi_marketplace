@@ -13,6 +13,7 @@ import { ProductResponse } from '#types/product';
 import { DataState } from '#types/data_state';
 import { ProductCardComponent } from './product-card/product-card.component'
 import { ConfirmDialogComponent } from '#shared/components/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '#services/auth.service';
 
 @Component({
   selector: 'app-products',
@@ -41,7 +42,8 @@ export class ProductsComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private toastService: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -119,5 +121,21 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  // Permission checking methods
+  canViewProducts(): boolean {
+    return this.authService.hasPermissions(['view:products']);
+  }
+
+  canCreateProducts(): boolean {
+    return this.authService.hasPermissions(['create:products']);
+  }
+
+  canUpdateProducts(): boolean {
+    return this.authService.hasPermissions(['update:products']);
+  }
+
+  canDeleteProducts(): boolean {
+    return this.authService.hasPermissions(['delete:products']);
+  }
 
 }

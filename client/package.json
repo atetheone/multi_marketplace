@@ -4,7 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:en": "ng serve --configuration=en",
     "build": "ng build",
+    "build:en": "ng build --configuration=en",
+    "extract-i18n": "ng extract-i18n",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -29,6 +32,7 @@
     "@angular-devkit/build-angular": "^19.0.2",
     "@angular/cli": "^19.0.2",
     "@angular/compiler-cli": "^19.0.0",
+    "@angular/localize": "^19.2.14",
     "@types/jasmine": "~5.1.0",
     "autoprefixer": "^10.4.20",
     "jasmine-core": "~5.4.0",

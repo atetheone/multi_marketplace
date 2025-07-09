@@ -10,6 +10,10 @@ import { TenantService } from './services/tenant.service';
 import { TenantResponse } from '#types/tenant';
 import { catchError, throwError, BehaviorSubject, map, of } from 'rxjs';
 import { DataState } from '#types/data_state';
+import { AuthService } from '#services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '#shared/components/confirm-dialog/confirm-dialog.component';
+import { ToastService } from '#shared/services/toast.service';
 
 
 @Component({
@@ -20,7 +24,7 @@ import { DataState } from '#types/data_state';
 
 })
 export class TenantsComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'slug', 'domain', 'status'];
+  displayedColumns: string[] = ['name', 'slug', 'domain', 'status', 'actions'];
   dataSource = new MatTableDataSource<TenantResponse>();
 
   private tenantsSubject = new BehaviorSubject<DataState<TenantResponse[]>>({
@@ -35,7 +39,10 @@ export class TenantsComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private tenantService: TenantService
+    private tenantService: TenantService,
+    private authService: AuthService,
+    private dialog: MatDialog,
+    private toastService: ToastService
   ) {}
 
   ngOnInit() {
@@ -76,6 +83,48 @@ export class TenantsComponent implements OnInit {
 
   navigateToTenantDetails(tenantId: number) {
     this.router.navigate(['/dashboard/tenants', tenantId])
+  }
+
+  deleteTenant(tenant: TenantResponse) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Supprimer le Tenant',
+        message: `Êtes-vous sûr de vouloir supprimer "${tenant.name}"? Cette action est irréversible.`,
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tenantService.deleteTenant(tenant.id).subscribe({
+          next: () => {
+            this.toastService.success('Tenant supprimé avec succès');
+            this.loadTenants();
+          },
+          error: () => {
+            this.toastService.error('Erreur lors de la suppression du tenant');
+          }
+        });
+      }
+    });
+  }
+
+  // Permission checking methods
+  canViewTenants(): boolean {
+    return this.authService.hasPermissions(['view:tenants']);
+  }
+
+  canCreateTenants(): boolean {
+    return this.authService.hasPermissions(['create:tenants']);
+  }
+
+  canUpdateTenants(): boolean {
+    return this.authService.hasPermissions(['update:tenants']);
+  }
+
+  canDeleteTenants(): boolean {
+    return this.authService.hasPermissions(['delete:tenants']);
   }
 
 }

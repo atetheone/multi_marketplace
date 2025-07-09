@@ -13,6 +13,7 @@ import { BehaviorSubject, finalize } from 'rxjs';
 import { ConfirmDialogComponent } from '#shared/components/confirm-dialog/confirm-dialog.component';
 import { ZoneDialogComponent } from '../zone-dialog/zone-dialog.component';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '#services/auth.service';
 
 @Component({
   selector: 'app-zone-management',
@@ -37,7 +38,8 @@ export class ZoneManagementComponent implements OnInit {
     private zoneService: ZoneService,
     private deliveryPersonService: DeliveryPersonService,
     private dialog: MatDialog,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {
     this.dataSource = new MatTableDataSource<DeliveryZoneResponse>([]);
   }
@@ -163,5 +165,22 @@ export class ZoneManagementComponent implements OnInit {
   
   getDeliveryPersonsCount(zone: DeliveryZoneResponse): number {
     return 0;
+  }
+
+  // Permission checking methods
+  canViewZones(): boolean {
+    return this.authService.hasPermissions(['view:zones']);
+  }
+
+  canCreateZones(): boolean {
+    return this.authService.hasPermissions(['create:zones']);
+  }
+
+  canUpdateZones(): boolean {
+    return this.authService.hasPermissions(['update:zones']);
+  }
+
+  canDeleteZones(): boolean {
+    return this.authService.hasPermissions(['delete:zones']);
   }
 }

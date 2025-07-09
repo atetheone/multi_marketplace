@@ -13,6 +13,12 @@
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
+      "i18n": {
+        "sourceLocale": "fr",
+        "locales": {
+          "en": "messages.en.xlf"
+        }
+      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -21,7 +27,8 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
-              "zone.js"
+              "zone.js",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "sass",
@@ -35,7 +42,8 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.sass"
             ],
-            "scripts": []
+            "scripts": [],
+            "i18nMissingTranslation": "error"
           },
           "configurations": {
             "production": {
@@ -63,6 +71,10 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "en": {
+              "outputPath": "dist/client-en/",
+              "localize": ["en"]
             }
           },
           "defaultConfiguration": "production"
@@ -75,6 +87,9 @@
             },
             "development": {
               "buildTarget": "client:build:development"
+            },
+            "en": {
+              "buildTarget": "client:build:en"
             }
           },
           "defaultConfiguration": "development",
@@ -90,7 +105,8 @@
           "options": {
             "polyfills": [
               "zone.js",
-              "zone.js/testing"
+              "zone.js/testing",
+              "@angular/localize/init"
             ],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "sass",

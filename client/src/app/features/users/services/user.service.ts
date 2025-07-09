@@ -47,6 +47,11 @@ export class UserService {
     return this.http.put<ApiResponse<UserResponse>>(`${this.userApi}/${userId}/roles`, { roleIds });
   }
 
+  // Update user status
+  updateUserStatus(userId: number, status: string): Observable<ApiResponse<UserResponse>> {
+    return this.http.put<ApiResponse<UserResponse>>(`${this.userApi}/${userId}/status`, { status });
+  }
+
   updateUserProfile(user: Partial<User>): Observable<ApiResponse<UserResponse>> {
     return this.http.put<ApiResponse<UserResponse>>(`${this.userApi}/profile`, user);
   }

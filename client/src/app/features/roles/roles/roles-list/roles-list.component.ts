@@ -12,6 +12,8 @@ import { DataState } from '#types/data_state';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { AuthService } from '#services/auth.service';
+import { RouterModule } from '@angular/router';
 
 interface RolesState extends DataState<RoleResponse[]> {
   data?: RoleResponse[];
@@ -19,7 +21,7 @@ interface RolesState extends DataState<RoleResponse[]> {
 
 @Component({
   selector: 'app-roles-list',
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, RouterModule],
   templateUrl: './roles-list.component.html',
   styleUrl: './roles-list.component.sass',
 })
@@ -41,7 +43,8 @@ export class RolesListComponent implements OnInit {
   constructor(
     private roleService: RoleService,
     private dialog: MatDialog,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -181,5 +184,22 @@ export class RolesListComponent implements OnInit {
       ...this.state.value,
       ...partialState
     });
+  }
+
+  // Permission checking methods
+  canViewRoles(): boolean {
+    return this.authService.hasPermissions(['view:roles']);
+  }
+
+  canCreateRoles(): boolean {
+    return this.authService.hasPermissions(['create:roles']);
+  }
+
+  canUpdateRoles(): boolean {
+    return this.authService.hasPermissions(['update:roles']);
+  }
+
+  canDeleteRoles(): boolean {
+    return this.authService.hasPermissions(['delete:roles']);
   }
 }

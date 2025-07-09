@@ -1,10 +1,12 @@
 <div class="container mx-auto p-4">
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Roles</h1>
-    <button mat-raised-button color="primary" (click)="openRoleDialog()">
-      <mat-icon>add</mat-icon>
-      New Role
-    </button>
+    <h1 class="text-2xl font-bold" i18n="@@rbac.roles.title">Rôles</h1>
+    @if (canCreateRoles()) {
+      <button mat-raised-button color="primary" (click)="openRoleDialog()">
+        <mat-icon>add</mat-icon>
+        <span i18n="@@rbac.roles.new">Nouveau Rôle</span>
+      </button>
+    }
   </div>
 
   @switch (state.value.status) {
@@ -72,21 +74,35 @@
 
           <!-- Actions Column -->
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.actions"> Actions </th>
             <td mat-cell *matCellDef="let role">
-              <button mat-icon-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <button mat-menu-item (click)="openRoleDialog(role)">
-                  <mat-icon>edit</mat-icon>
-                  <span>Edit</span>
+              @if (canViewRoles() || canUpdateRoles() || canDeleteRoles()) {
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
                 </button>
-                <button mat-menu-item (click)="confirmDelete(role)">
-                  <mat-icon color="warn">delete</mat-icon>
-                  <span class="text-red-500">Delete</span>
-                </button>
-              </mat-menu>
+                <mat-menu #menu="matMenu">
+                  @if (canViewRoles()) {
+                    <button mat-menu-item [routerLink]="['/dashboard/rbac/roles', role.id]">
+                      <mat-icon>visibility</mat-icon>
+                      <span i18n="@@common.view">Voir</span>
+                    </button>
+                  }
+                  @if (canUpdateRoles()) {
+                    <button mat-menu-item (click)="openRoleDialog(role)">
+                      <mat-icon>edit</mat-icon>
+                      <span i18n="@@common.edit">Modifier</span>
+                    </button>
+                  }
+                  @if (canDeleteRoles()) {
+                    <button mat-menu-item (click)="confirmDelete(role)">
+                      <mat-icon color="warn">delete</mat-icon>
+                      <span class="text-red-500" i18n="@@common.delete">Supprimer</span>
+                    </button>
+                  }
+                </mat-menu>
+              } @else {
+                <span class="text-gray-500" i18n="@@common.no.actions">Aucune action disponible</span>
+              }
             </td>
           </ng-container>
 

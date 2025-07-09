@@ -1,11 +1,11 @@
 <div class="container mx-auto p-4">
-  <h1 class="text-2xl font-bold mb-4">User Management</h1>
+  <h1 class="text-2xl font-bold mb-4" i18n="@@users.title">Gestion des Utilisateurs</h1>
 
   <!-- Button to open the user creation dialog -->
   <div class="flex flex-wrap justify-between items-center gap-2">
     <mat-form-field  class="search-field w-full md:w-1/2 lg:w-1/3 m-0">
-      <mat-label>Search Users</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Search by name, email, role...">
+      <mat-label i18n="@@users.search">Rechercher des Utilisateurs</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Rechercher par nom, email, rôle...">
       <mat-icon matPrefix class="mr-2">search</mat-icon>
       @if (searchControl.value) {
         <button mat-icon-button matSuffix (click)="searchControl.reset()">
@@ -14,15 +14,17 @@
       }
     </mat-form-field>
   
-    <button 
-      mat-raised-button 
-      color="primary" 
-      routerLink="/dashboard/users/create"
-      class="create-button h-[46px] px-4"
-    >
-      <mat-icon>add</mat-icon>
-      Create New User
-    </button>
+    @if (canCreateUsers()) {
+      <button 
+        mat-raised-button 
+        color="primary" 
+        routerLink="/dashboard/users/create"
+        class="create-button h-[46px] px-4"
+      >
+        <mat-icon>add</mat-icon>
+        <span i18n="@@users.create">Créer un Nouvel Utilisateur</span>
+      </button>
+    }
   </div>
 
   @if (viewModel$ | async; as vm) {
@@ -45,7 +47,7 @@
         <table mat-table [dataSource]="dataSource" matSort>
           <!-- Username Column -->
           <ng-container matColumnDef="username">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Username</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="@@users.username">Nom d'utilisateur</th>
             <td mat-cell *matCellDef="let user">{{ user.username }}</td>
           </ng-container>
       
@@ -57,19 +59,19 @@
       
           <!-- First name Column -->
            <ng-container matColumnDef="firstName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="@@users.firstName">Prénom</th>
             <td mat-cell *matCellDef="let user">{{ user.firstName }}</td>
           </ng-container>
       
           <!-- Last name Column -->
           <ng-container matColumnDef="lastName">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="@@users.lastName">Nom</th>
             <td mat-cell *matCellDef="let user">{{ user.lastName }}</td>
           </ng-container>
       
           <!-- Roles Column -->
           <ng-container matColumnDef="roles">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Roles</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header i18n="@@users.roles">Rôles</th>
             <td mat-cell *matCellDef="let user">
               <mat-chip-listbox>
                 @for (role of user.roles; track role.id) {
@@ -82,21 +84,67 @@
           </ng-container>
       
           <!-- Actions Column -->
-          <!-- <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef i18n="@@common.actions">Actions</th>
             <td mat-cell *matCellDef="let user">
-              <button mat-icon-button [routerLink]="['/dashboard/users/', user.id]">
-                <mat-icon>visibility</mat-icon>
-              </button>
+              @if (canViewUsers() || canUpdateUsers() || canDeleteUsers() || canActivateUsers() || canDeactivateUsers() || canAssignRoles()) {
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  @if (canViewUsers()) {
+                    <button mat-menu-item (click)="navigateToUserDetails(user.id)">
+                      <mat-icon>visibility</mat-icon>
+                      <span i18n="@@common.view">Voir</span>
+                    </button>
+                  }
+                  
+                  @if (canUpdateUsers()) {
+                    <button mat-menu-item [routerLink]="['/dashboard/users/edit', user.id]">
+                      <mat-icon>edit</mat-icon>
+                      <span i18n="@@common.edit">Modifier</span>
+                    </button>
+                  }
+
+                  @if (canAssignRoles()) {
+                    <button mat-menu-item [routerLink]="['/dashboard/users', user.id, 'roles']">
+                      <mat-icon>assignment_ind</mat-icon>
+                      <span i18n="@@users.assign.roles">Assigner des Rôles</span>
+                    </button>
+                  }
+
+                  @if (canActivateUsers() && user.status !== 'active') {
+                    <button mat-menu-item (click)="activateUser(user)">
+                      <mat-icon color="primary">check_circle</mat-icon>
+                      <span i18n="@@users.activate">Activer</span>
+                    </button>
+                  }
+
+                  @if (canDeactivateUsers() && user.status === 'active') {
+                    <button mat-menu-item (click)="deactivateUser(user)">
+                      <mat-icon color="warn">block</mat-icon>
+                      <span i18n="@@users.deactivate">Désactiver</span>
+                    </button>
+                  }
+
+                  @if (canDeleteUsers()) {
+                    <button mat-menu-item (click)="deleteUser(user)">
+                      <mat-icon color="warn">delete</mat-icon>
+                      <span class="text-red-500" i18n="@@common.delete">Supprimer</span>
+                    </button>
+                  }
+                </mat-menu>
+              } @else {
+                <span class="text-gray-500" i18n="@@common.no.actions">Aucune action disponible</span>
+              }
             </td>
-          </ng-container> -->
+          </ng-container>
       
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr 
             mat-row 
-            class="cursor-pointer hover:bg-gray-100"
-            *matRowDef="let row; columns: displayedColumns;" 
-            (click)="navigateToUserDetails(row.id)"
+            class="hover:bg-gray-100"
+            *matRowDef="let row; columns: displayedColumns;"
           ></tr>
         </table>
       }

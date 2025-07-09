@@ -16,6 +16,9 @@ import { catchError, throwError, BehaviorSubject, map, of } from 'rxjs';
 import { DataState } from '#types/data_state';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { AuthService } from '#services/auth.service';
+import { ConfirmDialogComponent } from '#shared/components/confirm-dialog/confirm-dialog.component';
+import { ToastService } from '#shared/services/toast.service';
 
 
 @Component({
@@ -28,7 +31,7 @@ export class UsersComponent implements OnInit {
   // Track error state
   isLoading = false;
   hasError = false;
-  displayedColumns: string[] = ['username', 'email', 'firstName', 'lastName', 'roles'];
+  displayedColumns: string[] = ['username', 'email', 'firstName', 'lastName', 'roles', 'actions'];
 
   dataSource = new MatTableDataSource<UserResponse>();
   
@@ -46,7 +49,10 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private dialog: MatDialog,
+    private toastService: ToastService
   ) { 
     // Set up search filter
     this.searchControl.valueChanges
@@ -110,6 +116,110 @@ export class UsersComponent implements OnInit {
 
   navigateToUserDetails(userId: number) {
     this.router.navigate(['/dashboard/users', userId]);
+  }
+
+  deleteUser(user: UserResponse) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Supprimer l\'utilisateur',
+        message: `Êtes-vous sûr de vouloir supprimer "${user.username}"? Cette action est irréversible.`,
+        confirmText: 'Supprimer',
+        cancelText: 'Annuler'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.deleteUser(user.id).subscribe({
+          next: () => {
+            this.toastService.success('Utilisateur supprimé avec succès');
+            this.loadUsers();
+          },
+          error: () => {
+            this.toastService.error('Erreur lors de la suppression de l\'utilisateur');
+          }
+        });
+      }
+    });
+  }
+
+  activateUser(user: UserResponse) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Activer l\'utilisateur',
+        message: `Êtes-vous sûr de vouloir activer "${user.username}"?`,
+        confirmText: 'Activer',
+        cancelText: 'Annuler'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.updateUserStatus(user.id, 'active').subscribe({
+          next: () => {
+            this.toastService.success('Utilisateur activé avec succès');
+            this.loadUsers();
+          },
+          error: () => {
+            this.toastService.error('Erreur lors de l\'activation de l\'utilisateur');
+          }
+        });
+      }
+    });
+  }
+
+  deactivateUser(user: UserResponse) {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Désactiver l\'utilisateur',
+        message: `Êtes-vous sûr de vouloir désactiver "${user.username}"?`,
+        confirmText: 'Désactiver',
+        cancelText: 'Annuler'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.updateUserStatus(user.id, 'inactive').subscribe({
+          next: () => {
+            this.toastService.success('Utilisateur désactivé avec succès');
+            this.loadUsers();
+          },
+          error: () => {
+            this.toastService.error('Erreur lors de la désactivation de l\'utilisateur');
+          }
+        });
+      }
+    });
+  }
+
+  // Permission checking methods
+  canViewUsers(): boolean {
+    return this.authService.hasPermissions(['view:users']);
+  }
+
+  canCreateUsers(): boolean {
+    return this.authService.hasPermissions(['create:users']);
+  }
+
+  canUpdateUsers(): boolean {
+    return this.authService.hasPermissions(['update:users']);
+  }
+
+  canDeleteUsers(): boolean {
+    return this.authService.hasPermissions(['delete:users']);
+  }
+
+  canActivateUsers(): boolean {
+    return this.authService.hasPermissions(['activate:users']);
+  }
+
+  canDeactivateUsers(): boolean {
+    return this.authService.hasPermissions(['deactivate:users']);
+  }
+
+  canAssignRoles(): boolean {
+    return this.authService.hasPermissions(['assign:roles']);
   }
 
 }

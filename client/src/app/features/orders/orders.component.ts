@@ -9,6 +9,7 @@ import { ToastService } from '#shared/services/toast.service';
 import { DataState } from '#types/data_state';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '#shared/components/confirm-dialog/confirm-dialog.component';
+import { AuthService } from '#services/auth.service';
 
 @Component({
   selector: 'app-orders',
@@ -38,7 +39,8 @@ export class OrdersComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private dialog: MatDialog,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   confirmOrder(order: OrderResponse) {
@@ -79,7 +81,7 @@ export class OrdersComponent implements OnInit {
     this.loadOrders();
   }
 
-  private updateOrderStatus(orderId: number, status: string) {
+  public updateOrderStatus(orderId: number, status: string) {
     this.isProcessing = true;
     this.orderService.updateOrderStatus(orderId, status).subscribe({
       next: () => {
@@ -125,5 +127,34 @@ export class OrdersComponent implements OnInit {
       delivered: 'success',
       cancelled: 'warn'
     }[status] || 'default';
+  }
+
+  // Permission checking methods for orders (special actions)
+  canViewOrders(): boolean {
+    return this.authService.hasPermissions(['view:orders']);
+  }
+
+  canUpdateOrders(): boolean {
+    return this.authService.hasPermissions(['update:orders']);
+  }
+
+  canConfirmOrders(): boolean {
+    return this.authService.hasPermissions(['confirm:orders']);
+  }
+
+  canCancelOrders(): boolean {
+    return this.authService.hasPermissions(['cancel:orders']);
+  }
+
+  canShipOrders(): boolean {
+    return this.authService.hasPermissions(['ship:orders']);
+  }
+
+  canDeliverOrders(): boolean {
+    return this.authService.hasPermissions(['deliver:orders']);
+  }
+
+  canRefundOrders(): boolean {
+    return this.authService.hasPermissions(['refund:orders']);
   }
 }
