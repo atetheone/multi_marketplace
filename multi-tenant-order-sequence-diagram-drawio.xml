@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="827" dy="1169" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    
+    <!-- Titre -->
+    <mxCell id="title" value="Diagramme de Séquence - Commande Multi-tenant" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;" parent="1" vertex="1">
+      <mxGeometry x="250" y="10" width="350" height="25" as="geometry" />
+    </mxCell>
+
+    <!-- Note globale -->
+    <mxCell id="global-note" value="Processus de commande multi-tenant" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+      <mxGeometry x="550" y="50" width="200" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- Participants -->
+    <mxCell id="utilisateur" value="Utilisateur" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+      <mxGeometry x="80" y="100" width="30" height="60" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="systeme" value="Système" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+      <mxGeometry x="250" y="100" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="admin-a" value="Admin A" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+      <mxGeometry x="480" y="100" width="30" height="60" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="admin-b" value="Admin B" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+      <mxGeometry x="620" y="100" width="30" height="60" as="geometry" />
+    </mxCell>
+
+    <!-- Lignes de vie -->
+    <mxCell id="lifeline-utilisateur" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="95" y="160" width="1" height="700" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-systeme" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="310" y="160" width="1" height="700" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-admin-a" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="495" y="160" width="1" height="700" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-admin-b" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="635" y="160" width="1" height="700" as="geometry" />
+    </mxCell>
+
+    <!-- Messages -->
+    <!-- 1. Utilisateur -> Système -->
+    <mxCell id="msg1" value="1: Valider panier multi-tenant" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="95" y="200" as="sourcePoint" />
+        <mxPoint x="310" y="200" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation Système -->
+    <mxCell id="activation-systeme" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+      <mxGeometry x="305" y="195" width="10" height="570" as="geometry" />
+    </mxCell>
+
+    <!-- 2. Système self-call -->
+    <mxCell id="msg2" value="2: Analyser contenu panier" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="315" y="240" as="sourcePoint" />
+        <mxPoint x="370" y="240" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return2" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="370" y="260" as="sourcePoint" />
+        <mxPoint x="315" y="260" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 3. Système self-call -->
+    <mxCell id="msg3" value="3: Identifier tenants (A, B)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="315" y="290" as="sourcePoint" />
+        <mxPoint x="370" y="290" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return3" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="370" y="310" as="sourcePoint" />
+        <mxPoint x="315" y="310" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 4. Système self-call -->
+    <mxCell id="msg4" value="4: Calculer frais livraison" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="315" y="340" as="sourcePoint" />
+        <mxPoint x="370" y="340" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return4" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="370" y="360" as="sourcePoint" />
+        <mxPoint x="315" y="360" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 5. Système -> Utilisateur -->
+    <mxCell id="msg5" value="5: Présenter récapitulatif" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="310" y="390" as="sourcePoint" />
+        <mxPoint x="95" y="390" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 6. Utilisateur -> Système -->
+    <mxCell id="msg6" value="6: Confirmer et payer" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="95" y="430" as="sourcePoint" />
+        <mxPoint x="310" y="430" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 7. Système self-call -->
+    <mxCell id="msg7" value="7: Traiter paiement global" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="315" y="470" as="sourcePoint" />
+        <mxPoint x="370" y="470" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return7" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="370" y="490" as="sourcePoint" />
+        <mxPoint x="315" y="490" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 8. Système self-call -->
+    <mxCell id="msg8" value="8: Séparer commandes par tenant" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="315" y="520" as="sourcePoint" />
+        <mxPoint x="370" y="520" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return8" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="370" y="540" as="sourcePoint" />
+        <mxPoint x="315" y="540" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 9. Système -> Admin A -->
+    <mxCell id="msg9" value="9: Notifier commande tenant A" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="310" y="580" as="sourcePoint" />
+        <mxPoint x="495" y="580" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 10. Système -> Admin B -->
+    <mxCell id="msg10" value="10: Notifier commande tenant B" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="310" y="620" as="sourcePoint" />
+        <mxPoint x="635" y="620" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 11. Système -> Utilisateur -->
+    <mxCell id="msg11" value="11: Confirmer commandes créées" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="310" y="660" as="sourcePoint" />
+        <mxPoint x="95" y="660" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- Note sur le processus -->
+    <mxCell id="process-note" value="Isolation automatique par tenant et traitement paiement" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="250" y="720" width="200" height="60" as="geometry" />
+    </mxCell>
+
+  </root>
+</mxGraphModel>

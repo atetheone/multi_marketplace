@@ -29,7 +29,7 @@ export default class VerifyENotification extends BaseMail {
         <p>
           <a href="${url}" 
             style="display: inline-block; 
-                    padding: 10px 20px; 
+                    *padding: 10px 20px; 
                     background-color: #4CAF50; 
                     color: white; 
                     text-decoration: none; 

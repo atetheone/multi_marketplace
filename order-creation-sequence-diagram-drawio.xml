@@ -1,0 +1,449 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxGraphModel dx="1600" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1600" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    
+    <!-- Titre -->
+    <mxCell id="title" value="Diagramme de Séquence - Création de Commande Multi-tenant" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;" parent="1" vertex="1">
+      <mxGeometry x="500" y="20" width="800" height="30" as="geometry" />
+    </mxCell>
+
+    <!-- Note globale -->
+    <mxCell id="global-note" value="Processus de création de commande multi-tenant" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+      <mxGeometry x="700" y="60" width="300" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- Participants -->
+    <mxCell id="client" value="Client" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+      <mxGeometry x="50" y="120" width="30" height="60" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="authmw" value="AuthMiddleware" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+      <mxGeometry x="140" y="120" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="tenantmw" value="CheckTenantMiddleware" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+      <mxGeometry x="300" y="120" width="140" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="controller" value="OrderController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+      <mxGeometry x="480" y="120" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="orderservice" value="OrderService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="640" y="120" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="cartservice" value="CartService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="800" y="120" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="inventoryservice" value="InventoryService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="960" y="120" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="addressservice" value="AddressService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="1120" y="120" width="120" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="notificationservice" value="NotificationService" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="1280" y="120" width="140" height="40" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="database" value="Database" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+      <mxGeometry x="1460" y="120" width="120" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- Lignes de vie -->
+    <mxCell id="lifeline-client" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="65" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-authmw" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="200" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-tenantmw" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="370" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-controller" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="540" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-orderservice" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="700" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-cartservice" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="860" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-inventoryservice" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="1020" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-addressservice" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="1180" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-notificationservice" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="1350" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+    
+    <mxCell id="lifeline-database" value="" style="shape=line;html=1;strokeWidth=2;strokeColor=#000000;direction=south;" parent="1" vertex="1">
+      <mxGeometry x="1520" y="180" width="1" height="1200" as="geometry" />
+    </mxCell>
+
+    <!-- Messages -->
+    <!-- 1. Client -> AuthMW -->
+    <mxCell id="msg1" value="1: POST /api/v1/orders&lt;br/&gt;{cartId, shippingAddress, paymentMethod}" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="65" y="220" as="sourcePoint" />
+        <mxPoint x="200" y="220" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation AuthMW -->
+    <mxCell id="activation-authmw1" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+      <mxGeometry x="195" y="215" width="10" height="1100" as="geometry" />
+    </mxCell>
+
+    <!-- 2. AuthMW self-call -->
+    <mxCell id="msg2" value="2: Authentifier JWT" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="205" y="260" as="sourcePoint" />
+        <mxPoint x="250" y="260" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return2" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="250" y="280" as="sourcePoint" />
+        <mxPoint x="205" y="280" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 3. AuthMW -> TenantMW -->
+    <mxCell id="msg3" value="3: next() avec user authentifié" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="200" y="320" as="sourcePoint" />
+        <mxPoint x="370" y="320" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation TenantMW -->
+    <mxCell id="activation-tenantmw" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+      <mxGeometry x="365" y="315" width="10" height="980" as="geometry" />
+    </mxCell>
+
+    <!-- 4. TenantMW self-call -->
+    <mxCell id="msg4" value="4: Résoudre tenant via X-Tenant-Slug" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="375" y="360" as="sourcePoint" />
+        <mxPoint x="420" y="360" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return4" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="420" y="380" as="sourcePoint" />
+        <mxPoint x="375" y="380" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 5. TenantMW -> Controller -->
+    <mxCell id="msg5" value="5: next() avec tenant context" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="370" y="420" as="sourcePoint" />
+        <mxPoint x="540" y="420" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation Controller -->
+    <mxCell id="activation-controller" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+      <mxGeometry x="535" y="415" width="10" height="860" as="geometry" />
+    </mxCell>
+
+    <!-- 6. Controller self-call -->
+    <mxCell id="msg6" value="6: Valider createOrderValidator" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="545" y="460" as="sourcePoint" />
+        <mxPoint x="590" y="460" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <mxCell id="return6" value="" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="590" y="480" as="sourcePoint" />
+        <mxPoint x="545" y="480" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 7. Controller -> OrderService -->
+    <mxCell id="msg7" value="7: createOrderFromCart(userId, tenantId, orderData)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="540" y="520" as="sourcePoint" />
+        <mxPoint x="700" y="520" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation OrderService -->
+    <mxCell id="activation-orderservice" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="695" y="515" width="10" height="720" as="geometry" />
+    </mxCell>
+
+    <!-- Note Transaction -->
+    <mxCell id="transaction-note" value="Transaction de création" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="800" y="540" width="150" height="40" as="geometry" />
+    </mxCell>
+
+    <!-- 8. OrderService -> DB (BEGIN) -->
+    <mxCell id="msg8" value="8: BEGIN TRANSACTION" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="600" as="sourcePoint" />
+        <mxPoint x="1520" y="600" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 9. OrderService -> CartService -->
+    <mxCell id="msg9" value="9: getUserCartById(cartId, userId)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="640" as="sourcePoint" />
+        <mxPoint x="860" y="640" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation CartService -->
+    <mxCell id="activation-cartservice" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="855" y="635" width="10" height="80" as="geometry" />
+    </mxCell>
+
+    <!-- 10. CartService -> DB -->
+    <mxCell id="msg10" value="10: SELECT cart + items + products" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="860" y="660" as="sourcePoint" />
+        <mxPoint x="1520" y="660" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 11. DB -> CartService -->
+    <mxCell id="return10" value="11: Cart avec articles" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1520" y="680" as="sourcePoint" />
+        <mxPoint x="860" y="680" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 12. CartService -> OrderService -->
+    <mxCell id="return9" value="12: Cart validé" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="860" y="700" as="sourcePoint" />
+        <mxPoint x="700" y="700" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 13. OrderService -> InventoryService -->
+    <mxCell id="msg13" value="13: reserveStock(cartItems)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="740" as="sourcePoint" />
+        <mxPoint x="1020" y="740" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation InventoryService -->
+    <mxCell id="activation-inventoryservice" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="1015" y="735" width="10" height="80" as="geometry" />
+    </mxCell>
+
+    <!-- 14. InventoryService -> DB -->
+    <mxCell id="msg14" value="14: UPDATE inventory (réserver stock)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1020" y="760" as="sourcePoint" />
+        <mxPoint x="1520" y="760" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 15. DB -> InventoryService -->
+    <mxCell id="return14" value="15: Stock réservé" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1520" y="780" as="sourcePoint" />
+        <mxPoint x="1020" y="780" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 16. InventoryService -> OrderService -->
+    <mxCell id="return13" value="16: Réservation OK" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1020" y="800" as="sourcePoint" />
+        <mxPoint x="700" y="800" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 17. OrderService -> AddressService -->
+    <mxCell id="msg17" value="17: createAddress(shippingAddress)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="840" as="sourcePoint" />
+        <mxPoint x="1180" y="840" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation AddressService -->
+    <mxCell id="activation-addressservice" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="1175" y="835" width="10" height="80" as="geometry" />
+    </mxCell>
+
+    <!-- 18. AddressService -> DB -->
+    <mxCell id="msg18" value="18: INSERT/VALIDATE address avec zone" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1180" y="860" as="sourcePoint" />
+        <mxPoint x="1520" y="860" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 19. DB -> AddressService -->
+    <mxCell id="return18" value="19: Adresse avec frais livraison" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1520" y="880" as="sourcePoint" />
+        <mxPoint x="1180" y="880" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 20. AddressService -> OrderService -->
+    <mxCell id="return17" value="20: Address créée" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1180" y="900" as="sourcePoint" />
+        <mxPoint x="700" y="900" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 21. OrderService -> DB (INSERT order) -->
+    <mxCell id="msg21" value="21: INSERT order + order_items" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="940" as="sourcePoint" />
+        <mxPoint x="1520" y="940" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 22. OrderService -> DB (UPDATE cart) -->
+    <mxCell id="msg22" value="22: UPDATE cart status = 'ordered'" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="970" as="sourcePoint" />
+        <mxPoint x="1520" y="970" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 23. DB -> OrderService -->
+    <mxCell id="return22" value="23: Commande créée" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1520" y="990" as="sourcePoint" />
+        <mxPoint x="700" y="990" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 24. OrderService -> DB (COMMIT) -->
+    <mxCell id="msg24" value="24: COMMIT TRANSACTION" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="1020" as="sourcePoint" />
+        <mxPoint x="1520" y="1020" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 25. OrderService -> NotificationService -->
+    <mxCell id="msg25" value="25: notifyOrderCreated(order)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="1060" as="sourcePoint" />
+        <mxPoint x="1350" y="1060" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- Activation NotificationService -->
+    <mxCell id="activation-notificationservice" value="" style="html=1;points=[];perimeter=orthogonalPerimeter;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;" parent="1" vertex="1">
+      <mxGeometry x="1345" y="1055" width="10" height="80" as="geometry" />
+    </mxCell>
+
+    <!-- 26. NotificationService -> DB -->
+    <mxCell id="msg26" value="26: INSERT notifications (client + staff)" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1350" y="1080" as="sourcePoint" />
+        <mxPoint x="1520" y="1080" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+    
+    <!-- 27. NotificationService -> OrderService -->
+    <mxCell id="return25" value="27: Notifications envoyées" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="1350" y="1120" as="sourcePoint" />
+        <mxPoint x="700" y="1120" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 28. OrderService -> Controller -->
+    <mxCell id="return7" value="28: Order créée" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="700" y="1160" as="sourcePoint" />
+        <mxPoint x="540" y="1160" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 29. Controller -> TenantMW -->
+    <mxCell id="return5" value="29: 201 + order data" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="540" y="1200" as="sourcePoint" />
+        <mxPoint x="370" y="1200" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 30. TenantMW -> AuthMW -->
+    <mxCell id="return3" value="30: Response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="370" y="1240" as="sourcePoint" />
+        <mxPoint x="200" y="1240" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+    <!-- 31. AuthMW -> Client -->
+    <mxCell id="return1" value="31: Commande créée avec succès" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;curved=0;rounded=0;" parent="1" edge="1">
+      <mxGeometry x="0.1" y="10" width="80" relative="1" as="geometry">
+        <mxPoint x="200" y="1280" as="sourcePoint" />
+        <mxPoint x="65" y="1280" as="targetPoint" />
+        <mxPoint as="offset" />
+      </mxGeometry>
+    </mxCell>
+
+  </root>
+</mxGraphModel>
